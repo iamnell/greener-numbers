@@ -12,7 +12,7 @@ export function MethodologyBox({ title = "How we calculate this", children }: { 
   return <aside className="methodology-box"><p className="eyebrow">Methodology</p><h2>{title}</h2><div>{children}</div><Link href="/methodology">Read the full methodology →</Link></aside>;
 }
 
-export function NewsletterCTA() { return <section className="newsletter-cta"><p className="eyebrow">Greener Numbers Weekly</p><h2>Energy prices. Consumer costs. The economics of going green.</h2><p>One useful email each week: the numbers, context, and a tool worth using.</p><Link className="button primary" href="/#newsletter">Get the weekly brief →</Link></section>; }
+export function NewsletterCTA() { return <section className="newsletter-cta"><p className="eyebrow">Greener Numbers Weekly</p><h2>Energy prices. Consumer costs. The economics of going green.</h2><p>One useful email each week: the numbers, context, and a tool worth using.</p><Link className="button primary" href="/#newsletter">Subscribe to newsletter →</Link></section>; }
 
 export function SourceList({ sources }: { sources: Array<{ name: string; href: string }> }) { return <section className="source-listing"><h2>Sources</h2><ul>{sources.map((source) => <li key={source.href}><a href={source.href} target="_blank" rel="noreferrer">{source.name} ↗</a></li>)}</ul></section>; }
 
