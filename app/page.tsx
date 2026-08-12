@@ -1,14 +1,11 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { NewsletterForm } from "../components/newsletter-form";
+import { articles, stateData } from "../lib/content";
 
-const nav = ["Energy costs", "Electricity", "Solar", "Electric vehicles", "Home energy", "Data & research"];
-
-const stories = [
-  { tag: "Electricity", title: "Why electricity bills are rising — and what households can control", read: "6 min read", metric: "+4.3%", detail: "average retail price change, year over year" },
-  { tag: "Transportation", title: "EV vs. gas: the cost difference gets clearer when you count every mile", read: "8 min read", metric: "$1,140", detail: "estimated annual fuel savings" },
-  { tag: "Solar", title: "The new math of residential solar payback", read: "7 min read", metric: "8.2 yrs", detail: "median payback period" },
-];
+const stories = articles.map((article, index) => ({ ...article, metric: ["+4.3%", "$1,140", "8.2 yrs"][index], detail: ["average retail price change, year over year", "estimated annual fuel savings", "illustrative payback period"][index] }));
 
 const tools = [
   ["EV vs. Gas", "Compare ownership and fuel costs", "→"],
@@ -17,12 +14,6 @@ const tools = [
   ["Heat pump vs. furnace", "Compare long-term heating costs", "→"],
 ];
 
-const dataRows = [
-  ["Connecticut", "31.8¢", "$190", "↑ 5.1%"],
-  ["California", "30.6¢", "$176", "↑ 3.8%"],
-  ["Texas", "15.4¢", "$164", "↑ 2.1%"],
-  ["United States", "17.9¢", "$143", "↑ 4.3%"],
-];
 
 function Arrow() { return <span aria-hidden="true">↗</span>; }
 
@@ -42,7 +33,7 @@ export default function Home() {
     <main>
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="Greener Numbers home"><span>GREENER</span> NUMBERS</a>
-        <nav aria-label="Main navigation">{nav.map((item) => <a href={`#${item.toLowerCase().replaceAll(" ", "-").replace("&", "and")}`} key={item}>{item}</a>)}</nav>
+        <nav aria-label="Main navigation"><Link href="/electricity-bills-rising">Energy costs</Link><Link href="/data">Electricity</Link><Link href="/solar-payback">Solar</Link><Link href="/ev-vs-gas-costs">Electric vehicles</Link><Link href="/methodology">Home energy</Link><Link href="/data">Data & research</Link></nav>
         <a className="header-link" href="#newsletter">Get the brief <Arrow /></a>
       </header>
 
@@ -51,7 +42,7 @@ export default function Home() {
           <p className="eyebrow">Independent data journalism</p>
           <h1>The economics<br />of going green.</h1>
           <p className="lede">Clear analysis, useful tools, and honest answers about what energy, transportation, and clean technology actually cost.</p>
-          <div className="actions"><a className="button primary" href="#data">Explore the data <Arrow /></a><a className="button text" href="#calculator">Use our calculators</a></div>
+          <div className="actions"><Link className="button primary" href="/data">Explore the data <Arrow /></Link><Link className="button text" href="/calculators">Use our calculators</Link></div>
           <div className="source-note"><span className="dot" /> Built on public data from EIA, DOE, BLS & more</div>
         </div>
         <div className="hero-visual" aria-label="Household energy cost line chart">
@@ -69,19 +60,19 @@ export default function Home() {
 
       <section className="ticker"><span>THE NUMBERS TODAY</span><p>U.S. electricity prices <b>+4.3%</b> year over year</p><i /><p>Gasoline average <b>$3.45/gal</b></p><i /><p>Utility-scale solar cost <b>−9%</b> in 12 months</p><a href="#data">View data <Arrow /></a></section>
 
-      <section className="section latest" id="energy-costs"><div className="section-head"><p className="eyebrow">Latest analysis</p><a href="#energy-costs">All analysis <Arrow /></a></div><div className="story-grid">{stories.map((story, i) => <article className="story" key={story.title}><div className={`story-art art-${i}`}><span>{story.metric}</span><small>{story.detail}</small>{i === 1 && <div className="mini-bars"><i/><i/><i/><i/><i/></div>}</div><p className="tag">{story.tag}</p><h2>{story.title}</h2><div className="article-meta">{story.read}<span>·</span><a href="#energy-costs">Read analysis <Arrow /></a></div></article>)}</div></section>
+      <section className="section latest" id="energy-costs"><div className="section-head"><p className="eyebrow">Latest analysis</p><Link href="/data">Data desk <Arrow /></Link></div><div className="story-grid">{stories.map((story, i) => <article className="story" key={story.title}><div className={`story-art art-${i}`}><span>{story.metric}</span><small>{story.detail}</small>{i === 1 && <div className="mini-bars"><i/><i/><i/><i/><i/></div>}</div><p className="tag">{story.category}</p><h2>{story.title}</h2><div className="article-meta">{story.read}<span>·</span><Link href={`/${story.slug}`}>Read analysis <Arrow /></Link></div></article>)}</div></section>
 
-      <section className="calculator-section" id="calculator"><div className="calculator-copy"><p className="eyebrow">Try a calculator</p><h2>What would an EV actually save you?</h2><p>Run the numbers with your driving habits, local gas price, and electricity rate. No lead form required.</p><a href="#calculator" className="underlined">See full EV vs. gas calculator <Arrow /></a></div><div className="calculator"><div className="calc-top"><span>EV vs. gas cost calculator</span><small>Annual estimate</small></div><div className="inputs"><label>Annual miles<input type="number" value={miles} onChange={(e) => setMiles(Number(e.target.value))} /></label><label>Gas mpg<input type="number" value={mpg} onChange={(e) => setMpg(Number(e.target.value))} /></label><label>Gas price<input type="number" step=".01" value={gas} onChange={(e) => setGas(Number(e.target.value))} /></label><label>EV mi/kWh<input type="number" step=".1" value={efficiency} onChange={(e) => setEfficiency(Number(e.target.value))} /></label><label>Electricity / kWh<input type="number" step=".01" value={electricity} onChange={(e) => setElectricity(Number(e.target.value))} /></label></div><div className="calc-results"><div><span>Gas car</span><b>${result.gasCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div><div><span>EV</span><b>${result.evCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div><div className="savings"><span>You could save</span><b>${Math.max(0, result.savings).toLocaleString(undefined, { maximumFractionDigits: 0 })}<small>/year</small></b></div></div></div></section>
+      <section className="calculator-section" id="calculator"><div className="calculator-copy"><p className="eyebrow">Try a calculator</p><h2>What would an EV actually save you?</h2><p>Run the numbers with your driving habits, local gas price, and electricity rate. No lead form required.</p><Link href="/calculators" className="underlined">See full EV vs. gas calculator <Arrow /></Link></div><div className="calculator"><div className="calc-top"><span>EV vs. gas cost calculator</span><small>Annual estimate</small></div><div className="inputs"><label>Annual miles<input type="number" min="0" value={miles} onChange={(e) => setMiles(Math.max(0, Number(e.target.value)))} /></label><label>Gas mpg<input type="number" min="0.1" value={mpg} onChange={(e) => setMpg(Math.max(.1, Number(e.target.value)))} /></label><label>Gas price<input type="number" min="0" step=".01" value={gas} onChange={(e) => setGas(Math.max(0, Number(e.target.value)))} /></label><label>EV mi/kWh<input type="number" min="0.1" step=".1" value={efficiency} onChange={(e) => setEfficiency(Math.max(.1, Number(e.target.value)))} /></label><label>Electricity / kWh<input type="number" min="0" step=".01" value={electricity} onChange={(e) => setElectricity(Math.max(0, Number(e.target.value)))} /></label></div><div className="calc-results"><div><span>Gas car</span><b>${result.gasCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div><div><span>EV</span><b>${result.evCost.toLocaleString(undefined, { maximumFractionDigits: 0 })}</b></div><div className="savings"><span>{result.savings >= 0 ? "You could save" : "EV cost difference"}</span><b>${Math.abs(result.savings).toLocaleString(undefined, { maximumFractionDigits: 0 })}<small>/year</small></b></div></div></div></section>
 
-      <section className="section tool-section" id="electricity"><div className="section-head"><div><p className="eyebrow">Built for decisions</p><h2>Tools that make the math useful.</h2></div><a href="#calculator">Browse calculators <Arrow /></a></div><div className="tool-grid">{tools.map(([title, desc, arrow], i) => <a className="tool" href="#calculator" key={title}><span className={`tool-num n${i}`}>0{i + 1}</span><h3>{title}</h3><p>{desc}</p><b>{arrow}</b></a>)}</div></section>
+      <section className="section tool-section" id="electricity"><div className="section-head"><div><p className="eyebrow">Built for decisions</p><h2>Tools that make the math useful.</h2></div><Link href="/calculators">Browse calculators <Arrow /></Link></div><div className="tool-grid">{tools.map(([title, desc, arrow], i) => <Link className="tool" href="/calculators" key={title}><span className={`tool-num n${i}`}>0{i + 1}</span><h3>{title}</h3><p>{desc}</p><b>{arrow}</b></Link>)}</div></section>
 
-      <section className="data-section" id="data"><div className="data-copy"><p className="eyebrow">Data, not guesses</p><h2>Electricity prices<br />by state</h2><p>Compare residential rates, typical bills, and year-over-year changes. Updated monthly as new public data becomes available.</p><a className="button primary" href="#data">Explore all state data <Arrow /></a><p className="method">Source: U.S. Energy Information Administration · Updated August 2026</p></div><div className="data-table"><div className="table-caption"><span>Residential electricity snapshot</span><button>United States⌄</button></div><div className="table-row header"><span>State</span><span>Rate / kWh</span><span>Typical bill</span><span>1-year change</span></div>{dataRows.map((row, i) => <div className="table-row" key={row[0]}>{row.map((item, j) => <span className={j === 3 ? "change" : ""} key={item}>{item}{i === 3 && j === 0 && <em>National average</em>}</span>)}</div>)}<a className="table-link" href="#data">View all 50 states <Arrow /></a></div></section>
+      <section className="data-section" id="data"><div className="data-copy"><p className="eyebrow">Data, not guesses</p><h2>Electricity prices<br />by state</h2><p>Compare residential rates, typical bills, and year-over-year changes. Updated with each published data release.</p><Link className="button primary" href="/data">Explore all state data <Arrow /></Link><p className="method">Source: U.S. Energy Information Administration · See methodology for definitions and release context.</p></div><div className="data-table"><div className="table-caption"><span>Residential electricity snapshot</span><Link href="/methodology">Methodology ↗</Link></div><div className="table-row header"><span>State</span><span>Rate / kWh</span><span>Typical bill</span><span>1-year change</span></div>{stateData.map((row, i) => <div className="table-row" key={row.state}><span>{row.state}{i === 3 && <em>National average</em>}</span><span>{row.rate}¢</span><span>${row.bill}</span><span className="change">↑ {row.change}%</span></div>)}<Link className="table-link" href="/data">Definitions & sources <Arrow /></Link></div></section>
 
-      <section className="section more" id="solar"><div><p className="eyebrow">More to explore</p><h2>Make better energy decisions.</h2></div><div className="more-links"><a href="#solar">Solar & home energy <span>Cost, payback, incentives <Arrow /></span></a><a href="#calculator">Electric vehicles <span>Charging, ownership, tax credits <Arrow /></span></a><a href="#energy-costs">Policy & incentives <span>What changed and who benefits <Arrow /></span></a></div></section>
+      <section className="section more" id="solar"><div><p className="eyebrow">More to explore</p><h2>Make better energy decisions.</h2></div><div className="more-links"><Link href="/solar-payback">Solar & home energy <span>Cost, payback, incentives <Arrow /></span></Link><Link href="/ev-vs-gas-costs">Electric vehicles <span>Charging, ownership, tax credits <Arrow /></span></Link><Link href="/editorial-standards">Policy & incentives <span>Clear analysis, clear standards <Arrow /></span></Link></div></section>
 
-      <section className="newsletter" id="newsletter"><p className="eyebrow">The weekly brief</p><h2>The numbers worth knowing.</h2><p>A sharp, free read on the money behind energy and the green transition. No hype. Just context.</p><form onSubmit={(e) => e.preventDefault()}><input type="email" aria-label="Email address" placeholder="Your email address" /><button type="submit">Subscribe <Arrow /></button></form><small>By subscribing, you agree to receive emails from Greener Numbers. Unsubscribe anytime.</small></section>
+      <section className="newsletter" id="newsletter"><p className="eyebrow">The weekly brief</p><h2>The numbers worth knowing.</h2><p>A sharp, free read on the money behind energy and the green transition. No hype. Just context.</p><NewsletterForm /><small>By subscribing, you agree to receive emails from Greener Numbers. Unsubscribe anytime.</small></section>
 
-      <footer><a className="wordmark" href="#top"><span>GREENER</span> NUMBERS</a><p>Making the economics of going green easier to understand.</p><div><a href="#energy-costs">About</a><a href="#data">Methodology</a><a href="#energy-costs">Editorial standards</a><a href="#newsletter">Advertise</a></div><small>© 2026 Greener Numbers. Information is for education, not financial advice.</small></footer>
+      <footer><a className="wordmark" href="#top"><span>GREENER</span> NUMBERS</a><p>Making the economics of going green easier to understand.</p><div><Link href="/about">About</Link><Link href="/methodology">Methodology</Link><Link href="/editorial-standards">Editorial standards</Link><Link href="/advertise">Advertise</Link></div><small>© 2026 Greener Numbers. Information is for education, not financial advice.</small></footer>
     </main>
   );
 }
