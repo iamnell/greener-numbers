@@ -67,7 +67,7 @@ When a provider is connected, add its fetcher in `lib/data/`, validate units and
 
 ## Supabase
 
-Supabase is **not connected** in this repository. No tables or migrations were created. When approved, use a migration-first schema for articles, guides, data updates, videos, newsletter content, and source URLs. Keep provider keys server-side and preserve any existing remote tables after inspecting them first.
+Supabase is prepared for newsletter signups. Create a Supabase project, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` to `.env.local` (and the production environment), then apply `supabase/migrations/20260812000000_create_newsletter_subscribers.sql` in the project's SQL Editor. The service-role key is used only by the server-side subscription route and must never be exposed to client code.
 
 ## Analytics
 
