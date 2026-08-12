@@ -60,6 +60,20 @@ test("renders article-level primary sources and assumptions", async () => {
   assert.match(articlePage, /Source release context/);
 });
 
+test("replaces illustrative electricity charts with a truthful EIA data boundary", async () => {
+  const [home, energyData, electricity, platform, eia] = await Promise.all([read("app/page.tsx"), read("app/energy-data/page.tsx"), read("app/electricity/page.tsx"), read("components/platform.tsx"), read("lib/data/eia.ts")]);
+  for (const page of [home, energyData, electricity]) {
+    assert.match(page, /getEnergyNowData/);
+    assert.match(page, /GridDemandChart/);
+    assert.doesNotMatch(page, /chartSeries/);
+  }
+  assert.match(platform, /Official EIA hourly data/);
+  assert.match(platform, /do not substitute an illustrative trend/);
+  assert.match(platform, /monthly national average retail-price measure/);
+  assert.match(eia, /revalidate: 3600/);
+  assert.match(eia, /EIA_API_KEY/);
+});
+
 test("centralizes conservative public response headers", async () => {
   const config = await read("next.config.ts");
   for (const header of ["Content-Security-Policy", "X-Content-Type-Options", "Referrer-Policy", "Permissions-Policy", "Cross-Origin-Opener-Policy"]) assert.match(config, new RegExp(header));
