@@ -55,6 +55,27 @@ export const sourceLinks = [
   { name: "DOE Alternative Fuels Data Center", href: "https://afdc.energy.gov/calc/?ldid=10068", note: "Vehicle Cost Calculator assumptions and comparisons." },
 ] as const;
 
+export const articleResearch = {
+  "electricity-bills-rising": {
+    releaseContext: "This explanatory article uses EIA electricity retail-sales and revenue definitions. It does not claim that a single national price explains an individual household bill.",
+    assumptions: ["A customer bill can include usage, an energy rate, fixed charges, taxes, and time- or season-based pricing.", "Average retail price is a revenue-per-kilowatthour measure, not an individual utility tariff."],
+    sources: [sourceLinks[0], sourceLinks[1]],
+  },
+  "ev-vs-gas-costs": {
+    releaseContext: "The fuel-cost calculation uses reader-entered miles, efficiency, and fuel/electricity prices; it is not a total-cost-of-ownership estimate.",
+    assumptions: ["Gas cost equals miles divided by mpg, multiplied by gas price.", "EV electricity cost equals miles divided by miles per kilowatt-hour, multiplied by electricity price.", "Purchase price, financing, insurance, maintenance, resale value, public charging, and incentives are excluded."],
+    sources: [sourceLinks[2]],
+  },
+  "solar-payback": {
+    releaseContext: "This article describes a simple-payback framework. Actual results depend on local production, retail rates, utility rules, incentives, financing, and system costs.",
+    assumptions: ["A simple payback divides after-incentive cost by an estimated annual savings value.", "It does not establish a project quote, production guarantee, or investment recommendation."],
+    sources: [
+      { name: "DOE Homeowner’s Guide to the Federal Tax Credit for Solar Photovoltaics", href: "https://www.energy.gov/eere/solar/homeowners-guide-federal-tax-credit-solar-photovoltaics", note: "Official federal guidance on the residential clean-energy credit and eligibility context." },
+      { name: "NREL PVWatts Calculator", href: "https://pvwatts.nrel.gov/", note: "Public calculator for location-specific PV energy-production estimates." },
+    ],
+  },
+} as const;
+
 export const resourcePages = {
   "data": { eyebrow: "Data desk", title: "Data with the assumptions attached.", intro: "A launch snapshot of residential electricity information, designed to show the comparison—not to substitute for your utility bill.", sections: [["What these figures mean", "Electricity figures are average retail prices and average monthly bills, not a quote for an individual household. EIA calculates average retail price from reported revenue and sales; utility rates may differ by plan, usage, time, and fees."], ["Update policy", "This launch snapshot is refreshed manually. The source and release context are displayed on the methodology page, and each future data release will carry a visible revision date."]] },
   "methodology": { eyebrow: "Methodology", title: "How we make the numbers useful.", intro: "Greener Numbers uses primary public sources wherever possible and labels estimates clearly.", sections: [["Electricity", "We use EIA retail-sales and revenue data for state-level comparisons. Average retail price is a revenue-per-kilowatthour measure and should not be treated as a utility tariff."], ["Vehicle costs", "The EV calculator estimates annual fuel or electricity use from miles, efficiency, and user-entered prices. It intentionally excludes ownership costs that vary widely between drivers."], ["Corrections", "If a source changes or an error is identified, we update the page, record the revision date, and explain a material methodology change in the article or data note."]] },

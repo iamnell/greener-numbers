@@ -3,9 +3,12 @@ import { NextResponse } from "next/server";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
-  const { email } = await request.json().catch(() => ({}));
+  const { email, consent } = await request.json().catch(() => ({}));
   if (typeof email !== "string" || !emailPattern.test(email)) {
     return NextResponse.json({ message: "Enter a valid email address." }, { status: 400 });
+  }
+  if (consent !== true) {
+    return NextResponse.json({ message: "Please confirm that you agree to receive the weekly brief." }, { status: 400 });
   }
 
   const apiKey = process.env.BEEHIIV_API_KEY;

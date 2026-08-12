@@ -31,10 +31,10 @@ export default function Home() {
   }, [miles, mpg, gas, efficiency, electricity]);
 
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <header className="site-header">
         <a className="wordmark" href="#top" aria-label="Greener Numbers home"><span>GREENER</span> NUMBERS</a>
-        <nav aria-label="Main navigation"><Link href="/electricity-bills-rising">Energy costs</Link><Link href="/data">Electricity</Link><Link href="/solar-payback">Solar</Link><Link href="/ev-vs-gas-costs">Electric vehicles</Link><Link href="/methodology">Home energy</Link><Link href="/data">Data & research</Link></nav>
+        <nav aria-label="Main navigation"><Link href="/electricity-bills-rising">Energy costs</Link><Link href="/data">Electricity data</Link><Link href="/solar-payback">Solar</Link><Link href="/ev-vs-gas-costs">Electric vehicles</Link><Link href="/calculators">Calculators</Link><Link href="/methodology">Methodology</Link></nav>
         <a className="header-link" href="#newsletter">Get the brief <Arrow /></a>
         <button className="menu-toggle" type="button" aria-expanded={menuOpen} aria-controls="mobile-menu" onClick={() => setMenuOpen((open) => !open)}>{menuOpen ? "Close" : "Menu"}<span aria-hidden="true">{menuOpen ? "×" : "☰"}</span></button>
         {menuOpen && <nav className="mobile-menu" id="mobile-menu" aria-label="Mobile navigation"><a onClick={() => setMenuOpen(false)} href="#top">Home</a><Link onClick={() => setMenuOpen(false)} href="/electricity-bills-rising">Energy costs</Link><Link onClick={() => setMenuOpen(false)} href="/data">Electricity data</Link><Link onClick={() => setMenuOpen(false)} href="/solar-payback">Solar</Link><Link onClick={() => setMenuOpen(false)} href="/ev-vs-gas-costs">Electric vehicles</Link><Link onClick={() => setMenuOpen(false)} href="/calculators">Calculators</Link><a onClick={() => setMenuOpen(false)} href="#newsletter">The weekly brief</a></nav>}
