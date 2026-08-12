@@ -10,4 +10,6 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: "Greener Numbers", description: "The economics of going green.", images: "/opengraph-image" },
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en"><body><a className="skip-link" href="#main-content">Skip to main content</a>{children}</body></html>; }
+const organizationSchema = { "@context": "https://schema.org", "@graph": [{ "@type": "Organization", name: "Greener Numbers", url: "https://greenernumbers.com", description: "Consumer energy economics tools, data and explainers." }, { "@type": "WebSite", name: "Greener Numbers", url: "https://greenernumbers.com", description: "The economics of going green." }] };
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="en"><body><a className="skip-link" href="#main-content">Skip to main content</a>{children}<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} /></body></html>; }

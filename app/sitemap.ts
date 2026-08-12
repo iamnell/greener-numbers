@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
+import { stateMetrics } from "../lib/data/energy";
 
-const routes = ["", "/electricity-bills-rising", "/ev-vs-gas-costs", "/solar-payback", "/data", "/calculators", "/methodology", "/editorial-standards", "/about", "/advertise"];
+const routes = ["", "/tools", "/energy-data", "/electricity", "/solar", "/ev", "/home-energy", "/guides", "/news", "/videos", "/electricity-bills-rising", "/ev-vs-gas-costs", "/solar-payback", "/data", "/calculators", "/methodology", "/editorial-standards", "/editorial-policy", "/about", "/advertise", "/contact", "/sources", "/affiliate-disclosure", "/privacy", "/terms", "/corrections-policy"];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return routes.map((route) => ({ url: `https://greenernumbers.com${route}`, lastModified: new Date(), changeFrequency: "weekly", priority: route === "" ? 1 : 0.8 }));
-}
+export default function sitemap(): MetadataRoute.Sitemap { const toolRoutes=["electricity-bill-calculator","appliance-energy-cost-calculator","ev-vs-gas-calculator","solar-savings-calculator","home-energy-savings-calculator","energy-inflation-calculator"].map(slug=>`/tools/${slug}`); const stateRoutes=stateMetrics.map(state=>`/electricity-prices/${state.slug}`); return [...routes,...toolRoutes,...stateRoutes].map((route) => ({ url: `https://greenernumbers.com${route}`, lastModified: new Date("2026-08-12"), changeFrequency: route.includes("tools") ? "monthly" : "weekly", priority: route === "" ? 1 : route.includes("electricity-prices") ? 0.6 : 0.8 })); }

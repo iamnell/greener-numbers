@@ -1,0 +1,8 @@
+export const tools = [
+  { slug: "electricity-bill-calculator", title: "Electricity Bill Calculator", description: "Estimate a bill, yearly electricity cost, and daily cost from your usage and rate.", category: "Electricity", inputs: "Usage, rate, billing period" },
+  { slug: "appliance-energy-cost-calculator", title: "Appliance Energy Cost Calculator", description: "Estimate what a refrigerator, dryer, space heater, TV, AC, dishwasher, or gaming PC costs to run.", category: "Home energy", inputs: "Watts, hours, days, rate" },
+  { slug: "ev-vs-gas-calculator", title: "EV vs. Gas Calculator", description: "Compare yearly fuel and electricity costs, monthly difference, and cost per mile.", category: "Transportation", inputs: "Miles, MPG, gas, EV efficiency" },
+  { slug: "solar-savings-calculator", title: "Solar Savings Calculator", description: "Screen a solar project using bills, system cost, estimated production, and an electricity rate.", category: "Solar", inputs: "Bill, cost, generation, rate" },
+  { slug: "home-energy-savings-calculator", title: "Home Energy Savings Calculator", description: "Estimate the financial impact of common efficiency improvements using editable assumptions.", category: "Home energy", inputs: "Spend, reduction, upgrade cost" },
+  { slug: "energy-inflation-calculator", title: "Energy Inflation Calculator", description: "Explore how a current energy cost could change with an adjustable annual inflation assumption.", category: "Energy data", inputs: "Current cost, inflation, years" },
+] as const;

@@ -5,12 +5,21 @@ import test from "node:test";
 const root = new URL("../", import.meta.url);
 const read = (path) => readFile(new URL(path, root), "utf8");
 
-test("publishes every route declared in the sitemap", async () => {
+test("publishes every platform route declared in the sitemap", async () => {
   const [sitemap, content] = await Promise.all([read("app/sitemap.ts"), read("lib/content.ts")]);
-  for (const route of ["electricity-bills-rising", "ev-vs-gas-costs", "solar-payback", "data", "calculators", "methodology", "editorial-standards", "about", "advertise"]) {
+  for (const route of ["tools", "energy-data", "electricity", "solar", "ev", "home-energy", "guides", "news", "videos", "electricity-bills-rising", "ev-vs-gas-costs", "solar-payback", "data", "calculators", "methodology", "editorial-standards", "about", "advertise"]) {
     assert.match(sitemap, new RegExp(`/${route}`));
-    if (route !== "calculators") assert.match(content, new RegExp(`"${route}"|slug: "${route}"`));
+    if (!["tools", "energy-data", "electricity", "solar", "ev", "home-energy", "guides", "news", "videos", "calculators"].includes(route)) assert.match(content, new RegExp(`"${route}"|slug: "${route}"`));
   }
+});
+
+test("keeps the consumer energy platform routes and transparent data boundary", async () => {
+  const [tools, stateRoute, energyData, data] = await Promise.all([read("lib/tools.ts"), read("app/electricity-prices/[state]/page.tsx"), read("app/energy-data/page.tsx"), read("lib/data/energy.ts")]);
+  for (const slug of ["electricity-bill-calculator", "appliance-energy-cost-calculator", "ev-vs-gas-calculator", "solar-savings-calculator", "home-energy-savings-calculator", "energy-inflation-calculator"]) assert.match(tools, new RegExp(slug));
+  assert.match(stateRoute, /Verified state metric pending/);
+  assert.match(stateRoute, /generateStaticParams/);
+  assert.match(energyData, /dataStatus/);
+  assert.match(data, /stateMetrics/);
 });
 
 test("keeps essential public trust and conversion surfaces", async () => {
@@ -20,7 +29,7 @@ test("keeps essential public trust and conversion surfaces", async () => {
   assert.match(layout, /skip-link/);
   assert.match(page, /id="main-content"/);
   assert.match(page, /NewsletterForm/);
-  assert.match(page, /\/methodology/);
+  assert.match(page, /Greener Numbers Weekly/);
   assert.match(subscribe, /BEEHIIV_API_KEY/);
   assert.match(subscribe, /BEEHIIV_PUBLICATION_ID/);
   assert.match(subscribe, /valid email address/);
@@ -37,11 +46,11 @@ test("gives the calculators page unique discoverability metadata and structured 
   assert.match(calculatorPage, /EV vs\. gas, solar payback, and electricity bill calculators/);
 });
 
-test("keeps navigation and tool links aligned to live pages", async () => {
-  const page = await read("app/page.tsx");
-  assert.doesNotMatch(page, /<Link href="\/methodology">Home energy<\/Link>/);
+test("uses live platform routes rather than placeholder tool links", async () => {
+  const [page, toolsPage] = await Promise.all([read("app/page.tsx"), read("app/tools/page.tsx")]);
   assert.doesNotMatch(page, /Heat pump vs\. furnace/);
-  assert.match(page, /Electricity bill.*\/calculators#bill/s);
+  assert.match(page, /\/tools/);
+  assert.match(toolsPage, /\/tools\/\$\{tool\.slug\}/);
 });
 
 test("renders article-level primary sources and assumptions", async () => {
