@@ -80,4 +80,17 @@ export async function getEnergyNowData(): Promise<EnergyNowData | null> {
   }
 }
 
+export async function getUsResidentialRateDefault(): Promise<{ centsPerKwh: number; period: string } | null> {
+  const apiKey = process.env.EIA_API_KEY;
+  if (!apiKey) return null;
+  try {
+    const url = eiaUrl("/electricity/retail-sales/data/", { api_key: apiKey, frequency: "monthly", "data[0]": "price", "facets[sectorid][]": "RES", "facets[stateid][]": "US", length: "1", "sort[0][column]": "period", "sort[0][direction]": "desc" });
+    const response = await fetch(url, { next: { revalidate: 86400 } });
+    if (!response.ok) return null;
+    const payload = await response.json() as { response?: { data?: EiaRetailRow[] } };
+    const row = payload.response?.data?.[0];
+    return row && Number.isFinite(Number(row.price)) ? { centsPerKwh: Number(row.price), period: humanMonth(row.period) } : null;
+  } catch { return null; }
+}
+
 export const eiaSources = { grid: GRID_SOURCE, retail: RETAIL_SOURCE };
