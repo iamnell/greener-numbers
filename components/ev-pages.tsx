@@ -9,7 +9,10 @@ import { getUsResidentialRateDefault } from "../lib/data/eia";
 const tools = [
   ["EV Charging Cost Calculator", "Estimate home, public, and blended charging costs from your driving and electricity assumptions.", "/ev/charging-cost-calculator"],
   ["EV vs. Gas Calculator", "Compare energy cost per mile, monthly spend, and five-year fuel savings.", "/ev/ev-vs-gas-calculator"],
-  ["Home Charger Cost Calculator", "Estimate installation cost, incentives, fuel savings, and simple payback.", "/ev/home-charger-cost"],
+  ["Home Charger Installation Calculator", "Estimate installation cost, incentives, fuel savings, and simple payback.", "/ev/home-charger-cost"],
+  ["Cheapest Times to Charge", "Estimate potential savings from shifting charging to your own off-peak rate.", "/ev/cheapest-time-to-charge"],
+  ["EV Charger Finder", "Search DOE/NREL public station data once the verified feed is connected.", "/ev/charger-finder"],
+  ["EV rebates & incentives", "Track source-linked federal, state, local, and utility programs as verified records.", "/ev/incentives"],
 ] as const;
 
 export const metadata: Metadata = { title: "EV & Transportation | Greener Numbers", description: "Calculate EV charging costs, compare electric and gasoline fuel costs, and estimate the economics of a home charger.", alternates: { canonical: "/ev" }, openGraph: { title: "The Real Cost of Going Electric | Greener Numbers", description: "Practical EV charging and ownership economics for household budgets.", url: "/ev" } };

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { calculateChargingCost, calculateEvVsGas, calculateHomeCharger } from "../lib/ev/calculations.js";
+import { calculateOffPeakSavings } from "../lib/ev/cheapest-time.js";
 
 test("charging-cost calculation separates home and public electricity costs including charging loss", () => {
   const result = calculateChargingCost({ annualMiles: 12000, efficiencyKwhPer100Miles: 28, homeRateCents: 16, publicRateCents: 42, homePercent: 80, chargingLossPercent: 10, batteryKwh: 75 });
@@ -19,6 +20,14 @@ test("EV versus gas compares the same annual miles and returns positive savings 
   assert.equal(result.annualSavings, 716.45);
   assert.equal(result.fiveYearSavings, 3582.25);
   assert.equal(result.gasCostPerMile, 0.13);
+});
+
+test("off-peak charging calculation caps a nonsensical off-peak share and reports the rate-shift savings", () => {
+  const result = calculateOffPeakSavings({ annualMiles: 12000, efficiencyKwhPer100Miles: 25, chargingLossPercent: 0, peakRateCents: 30, offPeakRateCents: 10, offPeakPercent: 125 });
+  assert.equal(result.annualKwh, 3000);
+  assert.equal(result.mixedAnnualCost, 300);
+  assert.equal(result.annualSavings, 600);
+  assert.equal(result.monthlySavings, 50);
 });
 
 test("home charger calculation subtracts only entered incentives and does not invent payback when savings are zero", () => {
