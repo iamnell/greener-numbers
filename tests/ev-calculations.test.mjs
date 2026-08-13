@@ -38,3 +38,14 @@ test("home charger calculation subtracts only entered incentives and does not in
   assert.equal(result.paybackYears, 1.38);
   assert.equal(calculateHomeCharger({ chargerPrice: 1000, laborCost: 0, electricalWork: 0, permitCost: 0, panelUpgrade: 0, otherCost: 0, federalIncentive: 0, stateIncentive: 0, utilityRebate: 0, manufacturerRebate: 0, otherRebate: 0, annualFuelSavings: 0 }).paybackYears, null);
 });
+
+test("calculators keep zero or invalid denominator inputs finite and cap incentives at the project cost", () => {
+  const charging = calculateChargingCost({ annualMiles: 0, efficiencyKwhPer100Miles: 28, homeRateCents: 16, publicRateCents: 42, homePercent: 80, chargingLossPercent: 10, batteryKwh: 75 });
+  const comparison = calculateEvVsGas({ annualMiles: 12000, evEfficiencyKwhPer100Miles: 28, homeRateCents: 16, publicRateCents: 42, homePercent: 80, chargingLossPercent: 10, gasMpg: 0, gasPrice: 3.5 });
+  const charger = calculateHomeCharger({ chargerPrice: 500, laborCost: 0, electricalWork: 0, permitCost: 0, panelUpgrade: 0, otherCost: 0, federalIncentive: 1000, stateIncentive: 0, utilityRebate: 0, manufacturerRebate: 0, otherRebate: 0, annualFuelSavings: 50 });
+  assert.equal(charging.costPerMile, 0);
+  assert.equal(charging.costPer100Miles, 0);
+  assert.equal(comparison.gasAnnualCost, 0);
+  assert.equal(charger.totalIncentives, 500);
+  assert.equal(charger.netInstallationCost, 0);
+});

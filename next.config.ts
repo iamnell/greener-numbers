@@ -24,6 +24,15 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/tools", destination: "/calculators", permanent: true },
+      { source: "/ev/charging-cost-calculator", destination: "/calculators/ev-charging-cost", permanent: true },
+      { source: "/ev/ev-vs-gas-calculator", destination: "/calculators/ev-vs-gas", permanent: true },
+      { source: "/ev/home-charger-cost", destination: "/calculators/home-ev-charger-cost", permanent: true },
+      { source: "/ev/incentives", destination: "/incentives", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/(.*)", headers: securityHeaders }];
   },

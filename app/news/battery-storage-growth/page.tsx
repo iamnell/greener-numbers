@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { RelatedTools } from "../../../components/related-tools";
 
 const source = "https://www.eia.gov/todayinenergy/detail.php?id=67925";
 const steo = "https://www.eia.gov/outlooks/steo/";
@@ -52,6 +53,7 @@ export default function BatteryStorageGrowthNews() {
         <p><strong>Related official context:</strong> EIA’s <a href={steo} target="_blank" rel="noreferrer">August 2026 Short-Term Energy Outlook ↗</a>, which contains EIA’s current electricity, natural-gas, and renewable-generation forecast context.</p>
         <p><strong>Update log:</strong> Initial publication on August 12, 2026. Claims are limited to the named EIA release; planned capacity is explicitly labeled as planned, not operating.</p>
       </section>
+      <RelatedTools topic="grid" />
     </article>
     <footer className="compact-footer"><Link href="/news">← More Greener Numbers News</Link><Link href="/editorial-standards">Editorial standards</Link></footer>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
