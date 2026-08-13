@@ -93,4 +93,19 @@ export async function getUsResidentialRateDefault(): Promise<{ centsPerKwh: numb
   } catch { return null; }
 }
 
+/** Server-only refresh record for durable rate caching. */
+export async function getUsResidentialRateRefreshRecord(): Promise<{ centsPerKwh: number; period: string } | null> {
+  const apiKey = process.env.EIA_API_KEY;
+  if (!apiKey) return null;
+  try {
+    const url = eiaUrl("/electricity/retail-sales/data/", { api_key: apiKey, frequency: "monthly", "data[0]": "price", "facets[sectorid][]": "RES", "facets[stateid][]": "US", length: "1", "sort[0][column]": "period", "sort[0][direction]": "desc" });
+    const response = await fetch(url, { cache: "no-store" });
+    if (!response.ok) return null;
+    const payload = await response.json() as { response?: { data?: EiaRetailRow[] } };
+    const row = payload.response?.data?.[0];
+    if (!row || !/^\d{4}-\d{2}$/.test(row.period) || !Number.isFinite(Number(row.price))) return null;
+    return { centsPerKwh: Number(row.price), period: `${row.period}-01` };
+  } catch { return null; }
+}
+
 export const eiaSources = { grid: GRID_SOURCE, retail: RETAIL_SOURCE };
