@@ -1,0 +1,5 @@
+import { greenerNumbersYouTube } from "../lib/video";
+
+export function YouTubeChannelEmbed({ compact = false }: { compact?: boolean }) {
+  return <section className={`youtube-channel ${compact ? "youtube-channel-compact" : ""}`} aria-labelledby="youtube-channel-heading"><div className="youtube-channel-copy"><p className="eyebrow">Greener Numbers on YouTube</p><h2 id="youtube-channel-heading">Watch the latest economics-of-going-green explainers.</h2><p>Videos connect the headline to the calculator, data, or guide that helps you apply it.</p><a className="button text" href={greenerNumbersYouTube.channelUrl} target="_blank" rel="noreferrer">Visit the YouTube channel ↗</a></div><div className="youtube-frame"><iframe title="Latest videos from Greener Numbers on YouTube" src={`https://www.youtube-nocookie.com/embed/videoseries?list=${greenerNumbersYouTube.uploadsPlaylistId}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen loading="lazy" referrerPolicy="strict-origin-when-cross-origin" /></div></section>;
+}

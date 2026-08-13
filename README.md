@@ -67,9 +67,14 @@ SUPABASE_SERVICE_ROLE_KEY=
 EIA_API_KEY=
 # Phase 2 only, server-side:
 NREL_API_KEY=
+CRON_SECRET= # server-only authorization for the daily Vercel Cron rate refresh
 ```
 
 Never commit secrets. `EIA_API_KEY`, `NREL_API_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` must never be client-exposed.
+
+### Scheduled refresh
+
+`vercel.json` schedules `GET /api/cron/ev-rate-refresh` daily at 08:15 UTC. It requires `Authorization: Bearer $CRON_SECRET`, fetches the latest EIA national residential retail price with `cache: "no-store"`, upserts it into `electricity_rates`, and logs the run in `data_source_updates`. Vercel must hold `CRON_SECRET` as a sensitive Production environment variable before the schedule is enabled. The endpoint returns no provider credentials.
 
 ## Phase 2 / Phase 3 backlog
 
