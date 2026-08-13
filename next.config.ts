@@ -5,6 +5,7 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'self'",
+  "frame-src 'self' https://www.youtube-nocookie.com",
   "img-src 'self' data: blob:",
   "script-src 'self' 'unsafe-inline'",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
