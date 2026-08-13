@@ -82,6 +82,12 @@ Phase 2: `/ev/charger-finder`, `/ev/incentives`, and `/ev/cheapest-time-to-charg
 
 Phase 3: normalized vehicle ingestion and `/ev/compare/[slug]`; EV guides; editorial EV-cost news routing; disclosed affiliate modules; installer lead flow; utility-specific time-of-use data. Do not mass-generate comparison pages before verified vehicle/fuel/incentive data exists.
 
+## Unpublished product contracts
+
+`lib/data/location.ts` defines the server-side ZIP/location provider contract. It intentionally has no active provider until ZIP-to-state, price, and incentive sources are configured and source freshness can be displayed.
+
+`lib/product/green-savings-score.ts` and `lib/product/green-cost-of-living.ts` define data contracts and publication gates only. Neither product exposes a score, ranking, or savings number until a public methodology and comparable source-backed datasets are available.
+
 ## Development and release
 
 ```bash

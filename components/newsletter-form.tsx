@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { track } from "../lib/analytics";
 
 export function NewsletterForm() {
   const [message, setMessage] = useState("");
@@ -22,6 +23,7 @@ export function NewsletterForm() {
       const body = await response.json();
       setMessage(body.message);
       if (response.ok) {
+        track("newsletter_signup", { surface: "newsletter_form" });
         form.reset();
         setConsent(false);
       }
