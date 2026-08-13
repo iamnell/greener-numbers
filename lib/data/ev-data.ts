@@ -1,4 +1,5 @@
 import { createServerClient } from "../supabase/server";
+import { isSupportedIncentiveJurisdiction } from "./incentive-jurisdictions";
 
 export type PublishedIncentive = {
   id: string;
@@ -24,7 +25,7 @@ export type PublishedIncentive = {
 
 export async function listVerifiedIncentives(state?: string) {
   const normalizedState = state?.trim().toUpperCase();
-  if (normalizedState && !/^[A-Z]{2}$/.test(normalizedState)) {
+  if (normalizedState && !isSupportedIncentiveJurisdiction(normalizedState)) {
     throw new Error("INVALID_STATE");
   }
 

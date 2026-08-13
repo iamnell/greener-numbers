@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const state = request.nextUrl.searchParams.get("state") ?? undefined;
   try {
     const incentives = await listVerifiedIncentives(state);
-    return NextResponse.json({ incentives, retrievedAt: new Date().toISOString() }, { headers: { "Cache-Control": "private, max-age=0, s-maxage=3600" } });
+    return NextResponse.json({ incentives, retrievedAt: new Date().toISOString(), incentiveCoverage: "Published records are individually source-reviewed. Statewide availability is not implied by local or utility programs, and an empty result is not a finding that no incentive exists." }, { headers: { "Cache-Control": "private, max-age=0, s-maxage=3600" } });
   } catch (error) {
     const message = error instanceof Error ? error.message : "INCENTIVES_READ_FAILED";
     const status = message === "INVALID_STATE" ? 400 : 503;
