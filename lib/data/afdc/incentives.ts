@@ -1,4 +1,0 @@
-export type EvIncentive = { id: string; programName: string; geographyType: "federal" | "state" | "local" | "utility"; geographyCode: string; incentiveType: string; valueText?: string; eligibility?: string; expiresAt?: string; status: "active" | "expired" | "unknown"; sourceUrl: string; lastCheckedAt: string };
-export const federalIncentives: EvIncentive[] = [
-  { id: "irs-30c", programName: "Alternative Fuel Vehicle Refueling Property Credit", geographyType: "federal", geographyCode: "US", incentiveType: "Charging equipment tax credit", valueText: "Eligibility and credit amount vary", eligibility: "Check current IRS rules, census-tract requirements, and tax eligibility before relying on this estimate.", status: "unknown", sourceUrl: "https://www.irs.gov/credits-deductions/alternative-fuel-vehicle-refueling-property-credit", lastCheckedAt: "2026-08-13" },
-];

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { EvPage } from "../../../components/ev-page";
-import { IncentiveFinder } from "../../../components/ev-phase-two";
-import { federalIncentives } from "../../../lib/data/afdc/incentives";
-export const metadata: Metadata={title:"EV Rebates & Incentives Finder | Greener Numbers",description:"Search EV and home charger incentives, then verify eligibility with the official program source.",alternates:{canonical:"/ev/incentives"}};
-export default function Page(){return <EvPage title="EV Rebates & Incentives" description="Search refreshable federal, state, local, utility, and home-charger incentive records. Program eligibility and availability must be verified with the source." crumbs={[{label:"Incentives"}]}><IncentiveFinder incentives={federalIncentives}/></EvPage>}
+import Link from "next/link";
+import { IncentivesFinder } from "../../../components/incentives-finder";
+import { SiteFooter, SiteHeader } from "../../../components/site-header";
+import { Breadcrumbs, MethodologyBox, NewsletterCTA } from "../../../components/platform";
+
+export const metadata: Metadata = { title: "EV Rebates & Incentives | Greener Numbers", description: "Search source-reviewed EV, home-charging, utility, and tax incentive records by location.", alternates: { canonical: "/ev/incentives" } };
+export default function Incentives() { return <><SiteHeader /><main className="platform-main" id="main-content"><Breadcrumbs items={[{label:"Home",href:"/"},{label:"EV & Transportation",href:"/ev"},{label:"EV Rebates & Incentives"}]} /><section className="tool-hero"><p className="eyebrow">EV economics</p><h1>EV rebates & incentives</h1><p>Search federal, state, local, utility, and home-charger programs without treating a general summary as eligibility advice.</p></section><IncentivesFinder/><MethodologyBox><p><strong>Data boundary:</strong> every published record carries an official source URL, geographic scope, status, and last-checked date. No incentive is shown until a source-reviewed record has been ingested. Confirm eligibility with the administering agency or utility before spending money.</p></MethodologyBox><section className="related-content"><h2>Related EV tools</h2><Link href="/ev/home-charger-cost">Home Charger Cost Calculator →</Link><Link href="/ev/cheapest-time-to-charge">Cheapest Times to Charge →</Link></section><NewsletterCTA /></main><SiteFooter /></> }

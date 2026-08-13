@@ -1,2 +1,19 @@
-import type { Metadata } from "next"; import { TopicHub } from "../../components/topic-hub";
-const hub={label:"News",title:"Consumer-relevant energy news.",description:"This section is reserved for data updates and policy changes that meaningfully affect household energy costs.",tool:"Browse calculators",href:"/tools",sections:[["What we cover","Electricity rates, energy inflation, utility regulation, EV incentives, solar incentives, gasoline, natural gas, and household spending."],["What we do not cover","Generic environmental news without a clear consumer-cost connection."],["Publication status","News publishing will begin when the editorial workflow and source review process are in place."]]} as const; export const metadata:Metadata={title:"Energy news | Greener Numbers",description:hub.description,alternates:{canonical:"/news"}}; export default function News(){return <TopicHub hub={hub}/>;}
+import type { Metadata } from "next";
+import Link from "next/link";
+import { SiteFooter, SiteHeader } from "../../components/site-header";
+
+export const metadata: Metadata = {
+  title: "Energy news | Greener Numbers",
+  description: "Source-backed reporting on consumer-relevant energy costs, grid changes, and clean technology.",
+  alternates: { canonical: "/news" },
+};
+
+export default function News() {
+  return <><SiteHeader /><main id="main-content" className="platform-main" tabIndex={-1}>
+    <section className="page-hero"><p className="eyebrow">News</p><h1>Consumer-relevant energy news.</h1><p>Source-backed reporting on data updates, grid changes, and policy developments that can matter for household energy costs.</p></section>
+    <section className="platform-section"><div className="section-intro"><div><p className="eyebrow">Latest</p><h2>Facts, analysis, and limits kept separate.</h2></div><Link href="/editorial-standards">Our standards →</Link></div>
+      <div className="article-cards"><Link href="/news/battery-storage-growth"><span>Grid & storage · August 12, 2026</span><h3>U.S. battery storage reached nearly 52 GW by June.</h3><p>What EIA’s reported capacity growth measures—and why it is not a household-bill forecast.</p><small>1 primary source · Facts, analysis, and limits separated</small></Link></div>
+    </section>
+    <section className="content-sections"><section><h2>What we cover</h2><p>Electricity rates, energy inflation, utility regulation, EV and solar incentives, gasoline, natural gas, and household spending.</p></section><section><h2>What we do not cover</h2><p>Generic environmental news without a clear consumer-cost or grid-reliability connection.</p></section><section><h2>How we report</h2><p>We link primary sources, distinguish confirmed facts from analysis, and name what the evidence does not establish.</p></section></section>
+  </main><SiteFooter /></>;
+}

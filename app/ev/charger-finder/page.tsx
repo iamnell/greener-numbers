@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { EvPage } from "../../../components/ev-page";
-import { ChargerFinder } from "../../../components/ev-phase-two";
-export const metadata: Metadata={title:"EV Charger Finder | Greener Numbers",description:"Find public Level 2 and DC fast charging stations using DOE Alternative Fuels Data Center records.",alternates:{canonical:"/ev/charger-finder"}};
-export default function Page(){return <EvPage title="EV Charger Finder" description="Search for public Level 2 and DC fast charging stations by ZIP code, city, or state. Station records are not presented as real-time availability." crumbs={[{label:"Charger Finder"}]}><ChargerFinder initialStations={[]} configured={Boolean(process.env.NREL_API_KEY)}/></EvPage>}
+import Link from "next/link";
+import { ChargerFinderClient } from "../../../components/charger-finder-client";
+import { SiteFooter, SiteHeader } from "../../../components/site-header";
+import { Breadcrumbs, MethodologyBox, NewsletterCTA } from "../../../components/platform";
+
+export const metadata: Metadata = { title: "EV Charger Finder | Greener Numbers", description: "Find public EV charging stations by location, connector, charging level, and access when authoritative DOE/NREL data is connected.", alternates: { canonical: "/ev/charger-finder" } };
+export default function ChargerFinder() { return <><SiteHeader /><main className="platform-main" id="main-content"><Breadcrumbs items={[{label:"Home",href:"/"},{label:"EV & Transportation",href:"/ev"},{label:"EV Charger Finder"}]} /><section className="tool-hero"><p className="eyebrow">EV charging</p><h1>EV Charger Finder</h1><p>Search public charging stations by ZIP code, city, connector, and charging level.</p></section><ChargerFinderClient /><MethodologyBox><p><strong>Data boundary:</strong> the station directory will be server-fetched, rate-limited, cached, time-stamped, and source-linked. Location permission will be optional and not stored by default.</p></MethodologyBox><section className="related-content"><h2>Related EV tools</h2><Link href="/ev/charging-cost-calculator">EV Charging Cost Calculator →</Link><Link href="/ev/incentives">EV rebates & incentives →</Link></section><NewsletterCTA /></main><SiteFooter /></> }

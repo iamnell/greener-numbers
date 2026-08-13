@@ -1,118 +1,88 @@
 # Greener Numbers
 
-Greener Numbers is a consumer energy economics platform: **tools → data → explainers** for understanding what electricity, household energy, solar, EVs, appliances, and energy inflation cost.
+Greener Numbers is a consumer energy-economics platform: **tools → data → explainers** for understanding what electricity, home energy, solar, EVs, appliances, and energy inflation cost.
 
 ## Architecture
 
 - **Framework:** Next.js 16, React 19, TypeScript, App Router.
-- **Deployment:** Vercel project `greener-numbers`, production branch `main`.
-- **Content:** static-first explainers in `lib/content.ts`; future CMS content can replace this layer without changing route contracts.
-- **Data:** `lib/data/energy.ts` is the single local data/service boundary. It contains only a limited source-labelled launch snapshot and all 50 state route definitions. Do not present missing state values as data.
-- **Tools:** calculator definitions live in `lib/tools.ts`; the reusable interactive calculation layer is `components/calculator-client.tsx`.
-- **UI:** platform shell in `components/site-header.tsx`; reusable transparency/UI primitives in `components/platform.tsx`.
+- **Deployment:** Vercel project `greener-numbers`; production branch `main`.
+- **UI:** platform shell in `components/site-header.tsx`; reusable components in `components/`.
+- **Data:** provider-specific adapters in `lib/data/`. External requests must remain server-side and source-attributed.
+- **Calculators:** shared EV calculation math is in `lib/ev/calculations.js`, with unit tests in `tests/ev-calculations.test.mjs`.
 
-## Routes
+## EV & Transportation — Phase 1
 
-- `/tools` and `/tools/[calculator]`
-- `/energy-data`, `/electricity`, `/solar`, `/ev`, `/home-energy`
-- `/electricity-prices/[state]` for all 50 states
-- `/guides`, `/news`, `/videos`
-- `/ev` plus indexable EV routes: `/ev/charging-cost-calculator`, `/ev/ev-vs-gas-calculator`, `/ev/home-charger-cost`, `/ev/charger-finder`, `/ev/incentives`, `/ev/cheapest-time-to-charge`, `/ev/guides`, and `/ev/news`
-- `/ev/compare/[slug]` supports reusable comparison pages; three curated starter routes are statically generated.
-- existing explainers and resource/trust pages
+### Live routes
 
-## Local development
+- `/ev` — EV & Transportation hub
+- `/ev/charging-cost-calculator`
+- `/ev/ev-vs-gas-calculator`
+- `/ev/home-charger-cost`
 
-```bash
-npm install
-npm run dev
-npm run lint
-npm test
-```
+All have unique metadata, canonical URLs, breadcrumbs, related-tool links, and WebApplication structured data. Calculator inputs can be initialized from query parameters and the **Copy shareable inputs** action writes the current inputs to the URL. Do not include sensitive information in calculator URLs.
 
-`npm test` runs the production build and source-level regression tests.
+### Formulas
+
+- **Energy use:** annual miles × kWh/100 miles ÷ 100 × (1 + charging-loss percentage).
+- **Charging cost:** energy use × home/public charging share × the selected price per kWh.
+- **Gas cost:** annual miles ÷ miles per gallon × gasoline price.
+- **EV savings:** gasoline cost − EV energy cost. Five-year savings holds entered assumptions constant.
+- **Home charger net cost:** entered purchase, labor, electrical, permit, panel, and other costs − entered incentives.
+- **Simple payback:** net installation cost ÷ entered annual fuel savings. It is not shown when savings are zero.
+
+These are estimates, never savings guarantees. Electricity rates, charging mix, charging losses, public pricing, taxes, fuel pricing, equipment, and installation conditions are user-adjustable.
+
+### Data sources and refresh behavior
+
+- **EIA:** `lib/data/eia.ts` retrieves the latest U.S. monthly residential price server-side, revalidated daily. Phase 1 uses it as an editable starting value where available; it is not a local tariff or real-time price.
+- **Future Phase 2:** DOE/NREL Alternative Fuel Stations API for station data and AFDC programs for incentives; real-time charger availability must not be claimed without a source that expressly supplies it.
+- UI components must have an explicit unavailable/estimate state, source link, freshness/period where data is shown, caching, and no invented fallback values.
+
+## Supabase
+
+The production project uses the versioned migrations in `supabase/migrations/` for `newsletter_subscribers`, `ev_vehicles`, `electricity_rates`, and `ev_incentives`. The EV tables retain RLS deny-by-default with no anonymous database policies. The deployed incentives API reads through the server-only Supabase client; it never exposes the service-role credential to browsers.
+
+`supabase/seed_ev_incentives.sql` is the narrow, idempotent initial publication set. It contains only individually reviewed DOE Alternative Fuels Data Center records, preserves their source IDs/URLs and source-update timestamps, and must be run through `npx supabase db query --linked --file supabase/seed_ev_incentives.sql`. Do not bulk-import AFDC records or publish a record merely because an upstream feed returned it. Re-check status, eligibility, current dates, and the official detail page before adding/updating a record.
+
+Planned Phase 2 tables/feeds: charging-station cache, utility time-of-use rates, source update ledger, and comparison records. Do not duplicate upstream datasets unnecessarily.
+
+## Analytics
+
+`lib/analytics.ts` provides provider-neutral, privacy-limited event boundaries. Current calculator events:
+
+- `ev_calculator_started`, `ev_calculator_completed`
+- `ev_vs_gas_completed`
+- `home_charger_calculation_completed`
+
+No provider is configured and no personal data, exact location, address, VIN, or email belongs in these events. A selected provider can subscribe to the custom browser event later.
 
 ## Environment variables
-
-The only active integration is Beehiiv:
 
 ```bash
 BEEHIIV_API_KEY=
 BEEHIIV_PUBLICATION_ID=
-EIA_API_KEY= # optional, server-only EIA v2 API key for live electricity-rate defaults
-NREL_API_KEY= # optional, server-only AFDC/NREL API key for charger finder records
-CRON_SECRET= # required before enabling any refresh endpoint or scheduled job
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+EIA_API_KEY=
+# Phase 2 only, server-side:
+NREL_API_KEY=
 ```
 
-These values are configured as sensitive Vercel environment variables. Never commit a `.env` file or API key.
+Never commit secrets. `EIA_API_KEY`, `NREL_API_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` must never be client-exposed.
 
-## Data providers and update strategy
+## Phase 2 / Phase 3 backlog
 
-Use dedicated server-side modules under `lib/data/` for all future providers—never scatter remote requests across React components.
+Phase 2: `/ev/charger-finder`, `/ev/incentives`, and `/ev/cheapest-time-to-charge`, built only after NREL/provider access and responsible map/geocoding choices are configured.
 
-Expected providers:
+Phase 3: normalized vehicle ingestion and `/ev/compare/[slug]`; EV guides; editorial EV-cost news routing; disclosed affiliate modules; installer lead flow; utility-specific time-of-use data. Do not mass-generate comparison pages before verified vehicle/fuel/incentive data exists.
 
-- EIA: electricity, fuel, residential bills, energy spending.
-- BLS / FRED: energy inflation context.
-- DOE / NREL: transportation, efficiency, solar methodology.
+## Development and release
 
-### EV architecture
+```bash
+npm install
+npm run lint
+npm test
+```
 
-Phase 1 formulas live in `lib/ev/calculations.ts`, keeping calculator math reusable and testable. `lib/ev/vehicles.ts` is a small editorial starter set; `public.ev_vehicles` is the replaceable normalized source of truth. EV calculator inputs are URL parameters, so estimates are shareable.
-
-`lib/data/eia/rates.ts` is the server-only EIA adapter. It caches a successful retail-electricity response for 24 hours and returns a clearly labelled launch-snapshot fallback when `EIA_API_KEY` is absent or EIA fails. Provider APIs must never be called from client components.
-
-`lib/data/afdc/client.ts` is the server-only charger-station adapter. `/api/ev/chargers` validates and caps a location query, uses 30-minute shared caching, and never reveals `NREL_API_KEY`. The finder intentionally labels records as station data—not live charger availability. `lib/data/afdc/incentives.ts` contains source-linked federal fallback records until AFDC incentive ingestion is configured.
-
-Charging energy = annual miles × kWh/100 miles ÷ 100 ÷ 90% charging efficiency. Charging cost applies the home/public mix to editable rates. Gas cost = annual miles ÷ MPG × gas price. Home charger payback = net installation cost ÷ estimated annual fuel savings.
-
-When a provider is connected, add its fetcher in `lib/data/`, validate units and release date, cache it with Next.js revalidation, and expose its source plus `last updated` date through `DataMeta`. A future scheduled Vercel Cron can refresh cached provider data; do not schedule a job until provider access and refresh frequency are approved.
-
-## Adding a calculator
-
-1. Add its definition to `lib/tools.ts`.
-2. Add a calculation branch and visible inputs/formula context in `components/calculator-client.tsx`.
-3. Add a methodology statement, source context, and SoftwareApplication schema through `app/tools/[slug]/page.tsx`.
-4. Update sitemap/tests and verify mobile layout.
-
-## Adding an article or state metric
-
-- Add articles and their research ledger to `lib/content.ts`.
-- Add a state metric only after recording a reviewed source, unit, release date, and update date in `lib/data/energy.ts` (or its future provider module). States without a verified metric intentionally render a data-pending state.
-
-## Supabase
-
-Supabase is prepared for newsletter signups. Create a Supabase project, add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` to `.env.local` (and the production environment), then apply `supabase/migrations/20260812000000_create_newsletter_subscribers.sql` in the project's SQL Editor. The service-role key is used only by the server-side subscription route and must never be exposed to client code.
-
-The EV foundation includes `ev_vehicles`, `electricity_rates`, and `ev_incentives`; `20260813120000_ev_data_access_policies.sql` grants public read access under RLS. `20260813123000_create_ev_refresh_tables.sql` adds `charging_stations`, `utility_rates`, `ev_comparisons`, and `data_source_updates`, with RLS enabled on every new table. A future scheduled refresh should run only from a server environment, write the provider/run status to `data_source_updates`, and upsert source timestamps. Do not present station availability as real time unless the upstream source provides it.
-
-## Analytics
-
-No analytics provider is active. Event boundaries should be centralized in a future `lib/analytics.ts`, with events such as `calculator_started`, `calculator_completed`, `newsletter_signup`, `article_to_tool_click`, `video_click`, `affiliate_click`, and `lead_cta_click`.
-
-EV boundaries now exist in `lib/analytics.ts`: `ev_calculator_started`, `ev_calculator_completed`, `ev_vehicle_selected`, `ev_vs_gas_completed`, `home_charger_calculation_completed`, `charger_finder_search`, `incentive_search`, `affiliate_click`, and `installer_lead_click`. Connect this boundary to the selected privacy-conscious analytics provider before treating events as collected.
-
-## Manual Actions Required
-
-### Vercel and DNS
-
-1. In Vercel → **Greener Numbers → Settings → Domains**, ensure `greenernumbers.com` is the primary domain.
-2. Add `www.greenernumbers.com` in the same screen and set its redirect target to `greenernumbers.com`.
-3. Vercel will show the exact DNS record required. Enter that exact record at Namecheap; do not copy a record from another project.
-4. Wait until both domains show **Valid Configuration** and SSL is issued.
-
-### Google Search Console
-
-1. Open [Google Search Console](https://search.google.com/search-console) and choose **Add property → Domain**.
-2. Enter `greenernumbers.com`.
-3. Google will provide a TXT record. Add the exact record to Namecheap DNS, then click **Verify** in Search Console.
-4. In Search Console, open **Sitemaps**, enter `https://greenernumbers.com/sitemap.xml`, and submit it.
-5. Use URL Inspection to request indexing for the homepage, `/tools`, `/energy-data`, and a representative state page after the production deployment is live.
-
-### Still needed before a full public-growth launch
-
-- A public editorial/contact inbox for `/contact` and corrections.
-- A Greener Numbers YouTube channel URL before real video embeds are added.
-- An approved data-refresh source/API plan before showing current gasoline, natural gas, or inflation values.
-- A privacy-conscious analytics account and explicit provider selection.
-- Legal review of privacy and terms pages before treating them as final legal documents.
+`npm test` runs the optimized production build plus all calculator/source regression tests. Before release, run lint, tests, `git diff --check`, deploy, then verify every public route and calculator interaction on desktop and mobile.
