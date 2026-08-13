@@ -40,7 +40,9 @@ These are estimates, never savings guarantees. Electricity rates, charging mix, 
 
 ## Supabase
 
-`supabase/migrations/20260812130000_create_ev_data_foundation.sql` adds migration-ready normalized `ev_vehicles`, `electricity_rates`, and `ev_incentives` tables, with timestamps and RLS enabled. It deliberately creates no anonymous read/write policies. Apply it through the Supabase migration workflow after review; then add a server-side ingestion path and restricted published read projections before exposing cached records.
+The production project uses the versioned migrations in `supabase/migrations/` for `newsletter_subscribers`, `ev_vehicles`, `electricity_rates`, and `ev_incentives`. The EV tables retain RLS deny-by-default with no anonymous database policies. The deployed incentives API reads through the server-only Supabase client; it never exposes the service-role credential to browsers.
+
+`supabase/seed_ev_incentives.sql` is the narrow, idempotent initial publication set. It contains only individually reviewed DOE Alternative Fuels Data Center records, preserves their source IDs/URLs and source-update timestamps, and must be run through `npx supabase db query --linked --file supabase/seed_ev_incentives.sql`. Do not bulk-import AFDC records or publish a record merely because an upstream feed returned it. Re-check status, eligibility, current dates, and the official detail page before adding/updating a record.
 
 Planned Phase 2 tables/feeds: charging-station cache, utility time-of-use rates, source update ledger, and comparison records. Do not duplicate upstream datasets unnecessarily.
 
