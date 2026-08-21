@@ -4,12 +4,13 @@ import { notFound } from "next/navigation";
 import { SiteFooter, SiteHeader } from "../../../components/site-header";
 import { Breadcrumbs, DataMeta, MethodologyBox, NewsletterCTA } from "../../../components/platform";
 import { dataStatus, stateMetrics } from "../../../lib/data/energy";
+import { pageMetadata } from "../../../lib/site";
 
 type Props = { params: Promise<{ state: string }> };
 const publishedStates = stateMetrics.filter((state) => state.rate !== undefined);
 
 export function generateStaticParams() { return publishedStates.map(({ slug }) => ({ state: slug })); }
-export async function generateMetadata({ params }: Props): Promise<Metadata> { const { state: slug } = await params; const state = publishedStates.find((item) => item.slug === slug); return state ? { title: `${state.name} energy costs | Greener Numbers`, description: `Source-labeled electricity-cost context and related consumer energy calculators for ${state.name}.`, alternates: { canonical: `/states/${slug}` } } : {}; }
+export async function generateMetadata({ params }: Props): Promise<Metadata> { const { state: slug } = await params; const state = publishedStates.find((item) => item.slug === slug); return state ? pageMetadata({ title: `${state.name} energy costs | Greener Numbers`, description: `Source-labeled electricity-cost context and related consumer energy calculators for ${state.name}.`, path: `/states/${slug}` }) : {}; }
 
 export default async function StatePage({ params }: Props) {
   const { state: slug } = await params; const state = publishedStates.find((item) => item.slug === slug); if (!state || state.rate === undefined || state.bill === undefined) notFound();

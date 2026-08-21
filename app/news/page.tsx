@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter, SiteHeader } from "../../components/site-header";
+import { pageMetadata } from "../../lib/site";
 
-export const metadata: Metadata = {
-  title: "Energy news | Greener Numbers",
-  description: "Source-backed reporting on consumer-relevant energy costs, grid changes, and clean technology.",
-  alternates: { canonical: "/news" },
-};
+export const metadata: Metadata = pageMetadata({ title: "Energy news | Greener Numbers", description: "Source-backed reporting on consumer-relevant energy costs, grid changes, and clean technology.", path: "/news", type: "article" });
 
 export default function News() {
   return <><SiteHeader /><main id="main-content" className="platform-main" tabIndex={-1}>

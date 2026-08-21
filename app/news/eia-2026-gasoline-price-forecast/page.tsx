@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
+import { pageMetadata } from "../../../lib/site";
 
 const source = "https://www.eia.gov/outlooks/steo/";
 const changes = "https://www.eia.gov/outlooks/steo/archives/aug26.pdf";
 
-export const metadata: Metadata = {
-  title: "EIA forecasts $3.78 average U.S. gasoline price for 2026 | Greener Numbers",
-  description: "EIA's August Short-Term Energy Outlook projects a U.S. regular gasoline retail price of $3.78 per gallon in 2026. It is a national annual forecast, not a local price quote.",
-  alternates: { canonical: "/news/eia-2026-gasoline-price-forecast" },
-};
+export const metadata: Metadata = pageMetadata({ title: "EIA forecasts $3.78 average U.S. gasoline price for 2026 | Greener Numbers", description: "EIA's August Short-Term Energy Outlook projects a U.S. regular gasoline retail price of $3.78 per gallon in 2026. It is a national annual forecast, not a local price quote.", path: "/news/eia-2026-gasoline-price-forecast", type: "article" });
 
 export default function EiaGasolineForecastNews() {
   const jsonLd = {

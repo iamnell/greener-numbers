@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { articleResearch, articles, resourcePages, siteUrl, sourceLinks, stateData } from "../../lib/content";
 import { RelatedTools, type RelatedTopic } from "../../components/related-tools";
+import { pageMetadata } from "../../lib/site";
 import { ArticleByline, articleAuthorJsonLd } from "../../lib/editorial";
 
 export function generateStaticParams() { return [...articles.map(({ slug }) => ({ slug })), ...Object.keys(resourcePages).map((slug) => ({ slug }))]; }
@@ -11,7 +12,7 @@ export function generateMetadata({ params }: { params: Promise<{ slug: string }>
   return params.then(({ slug }) => {
     const article = articles.find((item) => item.slug === slug);
     const resource = resourcePages[slug as keyof typeof resourcePages];
-    return article ? { title: `${article.title} | Greener Numbers`, description: article.dek, alternates: { canonical: `/${slug}` } } : resource ? { title: `${resource.title} | Greener Numbers`, description: resource.intro, alternates: { canonical: `/${slug}` } } : {};
+    return article ? pageMetadata({ title: `${article.title} | Greener Numbers`, description: article.dek, path: `/${slug}`, type: "article" }) : resource ? pageMetadata({ title: `${resource.title} | Greener Numbers`, description: resource.intro, path: `/${slug}` }) : {};
   });
 }
 

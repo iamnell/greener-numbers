@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
+import { pageMetadata } from "../../../lib/site";
 
 const doeRelease = "https://www.energy.gov/articles/energy-secretary-keeps-coal-fired-generation-operational-midwest";
 
-export const metadata: Metadata = {
-  title: "Breaking News: DOE orders Campbell plant availability through November | Greener Numbers",
-  description: "DOE's August 14 emergency order directs MISO, with Consumers Energy, to keep the 1,420 MW J.H. Campbell plant available from August 17 through November 14, 2026.",
-  alternates: { canonical: "/news/doe-campbell-plant-emergency-order-august-2026" },
-};
+export const metadata: Metadata = pageMetadata({ title: "Breaking News: DOE orders Campbell plant availability through November | Greener Numbers", description: "DOE's August 14 emergency order directs MISO, with Consumers Energy, to keep the 1,420 MW J.H. Campbell plant available from August 17 through November 14, 2026.", path: "/news/doe-campbell-plant-emergency-order-august-2026", type: "article" });
 
 export default function DoeCampbellEmergencyOrderNews() {
   const jsonLd = {

@@ -4,9 +4,10 @@ import { DataMeta, EnergyNowFallback, GridDemandChart, MonthlyResidentialPrice, 
 import { SiteFooter, SiteHeader } from "../../components/site-header";
 import { eiaSources, getEnergyNowData } from "../../lib/data/eia";
 import { dataStatus, nationalElectricity, stateMetrics } from "../../lib/data/energy";
+import { pageMetadata } from "../../lib/site";
 
 export const revalidate = 3600;
-export const metadata: Metadata = { title: "Electricity prices and bills | Greener Numbers", description: "Understand residential electricity prices, household bills, state differences, and the inputs behind an electricity bill.", alternates: { canonical: "/electricity" } };
+export const metadata: Metadata = pageMetadata({ title: "Electricity prices and bills | Greener Numbers", description: "Understand residential electricity prices, household bills, state differences, and the inputs behind an electricity bill.", path: "/electricity" });
 
 export default async function Electricity() {
   const energyNow = await getEnergyNowData();

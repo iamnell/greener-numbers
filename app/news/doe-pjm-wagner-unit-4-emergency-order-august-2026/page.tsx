@@ -1,16 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
+import { pageMetadata } from "../../../lib/site";
 
 const doeRelease = "https://www.energy.gov/articles/energy-secretary-acts-protect-mid-atlantic-grid";
 const doeOrderPage = "https://www.energy.gov/ceser/federal-power-act-section-202c-pjm-interconnection-llc-pjm-order-no-202-26-25";
 const doeOrder = "https://www.energy.gov/documents/doe-order-no-202-26-25a";
 
-export const metadata: Metadata = {
-  title: "Breaking News: DOE emergency order lets PJM use Wagner Unit 4 through November | Greener Numbers",
-  description: "DOE's August 19 emergency order lets PJM, working with Talen Energy, run Wagner Unit 4 in Maryland through November 17 to meet anticipated demand. It does not set a retail rate.",
-  alternates: { canonical: "/news/doe-pjm-wagner-unit-4-emergency-order-august-2026" },
-};
+export const metadata: Metadata = pageMetadata({ title: "Breaking News: DOE emergency order lets PJM use Wagner Unit 4 through November | Greener Numbers", description: "DOE's August 19 emergency order lets PJM, working with Talen Energy, run Wagner Unit 4 in Maryland through November 17 to meet anticipated demand. It does not set a retail rate.", path: "/news/doe-pjm-wagner-unit-4-emergency-order-august-2026", type: "article" });
 
 export default function DoePjmWagnerEmergencyOrderNews() {
   const jsonLd = {

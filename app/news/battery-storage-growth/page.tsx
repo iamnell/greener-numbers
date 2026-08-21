@@ -2,15 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
 import { RelatedTools } from "../../../components/related-tools";
+import { pageMetadata } from "../../../lib/site";
 
 const source = "https://www.eia.gov/todayinenergy/detail.php?id=67925";
 const steo = "https://www.eia.gov/outlooks/steo/";
 
-export const metadata: Metadata = {
-  title: "U.S. battery storage reached nearly 52 GW by June | Greener Numbers",
-  description: "EIA says U.S. nameplate battery storage capacity approached 52 gigawatts in June 2026. What that measures—and what it does not mean for a household bill.",
-  alternates: { canonical: "/news/battery-storage-growth" },
-};
+export const metadata: Metadata = pageMetadata({ title: "U.S. battery storage reached nearly 52 GW by June | Greener Numbers", description: "EIA says U.S. nameplate battery storage capacity approached 52 gigawatts in June 2026. What that measures—and what it does not mean for a household bill.", path: "/news/battery-storage-growth", type: "article" });
 
 export default function BatteryStorageGrowthNews() {
   const jsonLd = {

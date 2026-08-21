@@ -4,9 +4,10 @@ import { EnergyNowFallback, GridDemandChart, MonthlyResidentialPrice, DataMeta, 
 import { SiteFooter, SiteHeader } from "../../components/site-header";
 import { eiaSources, getEnergyNowData } from "../../lib/data/eia";
 import { dataStatus, energyNumbers } from "../../lib/data/energy";
+import { pageMetadata } from "../../lib/site";
 
 export const revalidate = 3600;
-export const metadata: Metadata = { title: "Energy data | Greener Numbers", description: "Explore transparent consumer energy data hubs for electricity, gasoline, natural gas, solar, EV costs and household energy spending.", alternates: { canonical: "/energy-data" } };
+export const metadata: Metadata = pageMetadata({ title: "Energy data | Greener Numbers", description: "Explore transparent consumer energy data hubs for electricity, gasoline, natural gas, solar, EV costs and household energy spending.", path: "/energy-data" });
 const areas = [["Electricity Prices", "Residential rates, bills, state comparisons and explanations.", "/electricity"], ["Gasoline Prices", "A future data module for consumer fuel costs and inflation context.", "/guides"], ["Natural Gas Prices", "A future data module for household heating and energy spending.", "/home-energy"], ["Solar Economics", "Payback concepts, system-cost context and transparent assumptions.", "/solar"], ["EV Costs", "Fuel cost, charging and cost-per-mile explainers.", "/ev"], ["State Energy Data", "All 50 state electricity price templates, ready for verified metrics.", "/electricity-prices/texas"]];
 
 export default async function EnergyData() {

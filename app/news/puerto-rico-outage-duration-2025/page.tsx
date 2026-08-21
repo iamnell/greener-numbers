@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
+import { pageMetadata } from "../../../lib/site";
 
 const source = "https://www.eia.gov/todayinenergy/detail.php?id=67926";
 const data = "https://www.eia.gov/electricity/annual/";
 
-export const metadata: Metadata = {
-  title: "Puerto Rico outage duration rose 19% in 2025 | Greener Numbers",
-  description: "EIA reports that Puerto Rico customers experienced 36 hours of non-major-event outages on average in 2025, 19% more than in 2024.",
-  alternates: { canonical: "/news/puerto-rico-outage-duration-2025" },
-};
+export const metadata: Metadata = pageMetadata({ title: "Puerto Rico outage duration rose 19% in 2025 | Greener Numbers", description: "EIA reports that Puerto Rico customers experienced 36 hours of non-major-event outages on average in 2025, 19% more than in 2024.", path: "/news/puerto-rico-outage-duration-2025", type: "article" });
 
 export default function PuertoRicoOutageDurationNews() {
   const jsonLd = {

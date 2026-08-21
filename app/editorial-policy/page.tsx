@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { TrustPage } from "../../components/trust-page";
+import { pageMetadata } from "../../lib/site";
 
-export const metadata: Metadata = {
-  title: "Editorial policy | Greener Numbers",
-  description: "How Greener Numbers researches, reviews, cites, updates, and corrects source-backed editorial coverage.",
-  alternates: { canonical: "/editorial-policy" },
-};
+export const metadata: Metadata = pageMetadata({ title: "Editorial policy | Greener Numbers", description: "How Greener Numbers researches, reviews, cites, updates, and corrects source-backed editorial coverage.", path: "/editorial-policy" });
 
 export default function Editorial() {
   return <TrustPage eyebrow="Editorial policy" title="Clear sources. Clear assumptions. Clear corrections." intro="Greener Numbers publishes consumer energy economics coverage designed to be useful, source-backed, and understandable. The editorial team remains responsible for what we publish." sections={[

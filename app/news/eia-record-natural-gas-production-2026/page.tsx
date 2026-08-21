@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
+import { pageMetadata } from "../../../lib/site";
 
 const source = "https://www.eia.gov/todayinenergy/detail.php?id=67944";
 const steo = "https://www.eia.gov/outlooks/steo/";
 
-export const metadata: Metadata = {
-  title: "EIA forecasts record U.S. natural-gas production in 2026 | Greener Numbers",
-  description: "EIA forecasts U.S. marketed natural-gas production will average 122.5 Bcf/d in 2026. Production alone does not establish a household gas or electricity bill.",
-  alternates: { canonical: "/news/eia-record-natural-gas-production-2026" },
-};
+export const metadata: Metadata = pageMetadata({ title: "EIA forecasts record U.S. natural-gas production in 2026 | Greener Numbers", description: "EIA forecasts U.S. marketed natural-gas production will average 122.5 Bcf/d in 2026. Production alone does not establish a household gas or electricity bill.", path: "/news/eia-record-natural-gas-production-2026", type: "article" });
 
 export default function EiaRecordNaturalGasProductionNews() {
   const jsonLd = {
