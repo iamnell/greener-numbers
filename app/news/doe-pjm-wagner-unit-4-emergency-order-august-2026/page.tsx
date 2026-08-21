@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
 
 const doeRelease = "https://www.energy.gov/articles/energy-secretary-acts-protect-mid-atlantic-grid";
 const doeOrderPage = "https://www.energy.gov/ceser/federal-power-act-section-202c-pjm-interconnection-llc-pjm-order-no-202-26-25";
@@ -12,7 +13,6 @@ export const metadata: Metadata = {
 };
 
 export default function DoePjmWagnerEmergencyOrderNews() {
-  const published = "August 20, 2026";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -21,6 +21,7 @@ export default function DoePjmWagnerEmergencyOrderNews() {
     datePublished: "2026-08-20",
     dateModified: "2026-08-20",
     mainEntityOfPage: "https://greenernumbers.com/news/doe-pjm-wagner-unit-4-emergency-order-august-2026",
+    author: articleAuthorJsonLd(),
     publisher: { "@type": "Organization", name: "Greener Numbers", url: "https://greenernumbers.com" },
   };
 
@@ -30,7 +31,8 @@ export default function DoePjmWagnerEmergencyOrderNews() {
       <p className="eyebrow">Breaking News · Grid reliability · 3 min read</p>
       <h1>Breaking News: DOE emergency order lets PJM use Wagner Unit 4 through November</h1>
       <p className="article-dek">A federal emergency order effective today authorizes PJM, coordinating with Talen Energy, to run Wagner Generating Station Unit 4 in Maryland through November 17 to meet anticipated demand. The order does not set a retail electricity rate or predict a customer bill.</p>
-      <p className="article-date">Published {published} · Updated {published} · Educational analysis, not financial advice.</p>
+      <ArticleByline publishedAt="2026-08-20" updatedAt="2026-08-20" />
+      <p className="article-date">Educational analysis, not financial advice.</p>
 
       <section><h2>Confirmed facts</h2>
         <p>On August 19, the U.S. Department of Energy issued emergency Order No. 202-26-25A under Section 202(c) of the Federal Power Act. DOE says the order authorizes PJM Interconnection, L.L.C., in coordination with Talen Energy Corporation, to run Unit 4 at the Wagner Generating Station in Anne Arundel County, Maryland, to meet anticipated electricity demand.</p>

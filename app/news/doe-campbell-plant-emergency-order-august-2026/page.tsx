@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
 
 const doeRelease = "https://www.energy.gov/articles/energy-secretary-keeps-coal-fired-generation-operational-midwest";
 
@@ -10,7 +11,6 @@ export const metadata: Metadata = {
 };
 
 export default function DoeCampbellEmergencyOrderNews() {
-  const published = "August 14, 2026";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -19,6 +19,7 @@ export default function DoeCampbellEmergencyOrderNews() {
     datePublished: "2026-08-14",
     dateModified: "2026-08-14",
     mainEntityOfPage: "https://greenernumbers.com/news/doe-campbell-plant-emergency-order-august-2026",
+    author: articleAuthorJsonLd(),
     publisher: { "@type": "Organization", name: "Greener Numbers", url: "https://greenernumbers.com" },
   };
 
@@ -28,7 +29,8 @@ export default function DoeCampbellEmergencyOrderNews() {
       <p className="eyebrow">Breaking News · Grid reliability · 3 min read</p>
       <h1>Breaking News: DOE orders Michigan’s Campbell plant to remain available through November</h1>
       <p className="article-dek">A new federal emergency order directs MISO, working with Consumers Energy, to keep the 1,420-megawatt J.H. Campbell coal plant available to operate from August 17 through November 14. The release does not quantify an effect on any customer’s bill.</p>
-      <p className="article-date">Published {published} · Updated {published} · Educational analysis, not financial advice.</p>
+      <ArticleByline publishedAt="2026-08-14" updatedAt="2026-08-14" />
+      <p className="article-date">Educational analysis, not financial advice.</p>
 
       <section><h2>Confirmed facts</h2>
         <p>On August 14, the U.S. Department of Energy said Secretary Chris Wright issued an emergency order addressing grid-reliability issues in the Midwest. DOE says the order directs the Midcontinent Independent System Operator (MISO), in coordination with Consumers Energy, to ensure the 1,420-megawatt (MW) J.H. Campbell coal-fired power plant in West Olive, Michigan is available to operate.</p>

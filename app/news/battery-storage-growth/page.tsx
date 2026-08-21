@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
 import { RelatedTools } from "../../../components/related-tools";
 
 const source = "https://www.eia.gov/todayinenergy/detail.php?id=67925";
@@ -12,7 +13,6 @@ export const metadata: Metadata = {
 };
 
 export default function BatteryStorageGrowthNews() {
-  const published = "August 12, 2026";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -21,6 +21,7 @@ export default function BatteryStorageGrowthNews() {
     datePublished: "2026-08-12",
     dateModified: "2026-08-12",
     mainEntityOfPage: "https://greenernumbers.com/news/battery-storage-growth",
+    author: articleAuthorJsonLd(),
     publisher: { "@type": "Organization", name: "Greener Numbers", url: "https://greenernumbers.com" },
   };
 
@@ -30,7 +31,8 @@ export default function BatteryStorageGrowthNews() {
       <p className="eyebrow">News · Grid & storage · 4 min read</p>
       <h1>U.S. battery storage reached nearly 52 GW by June. That is grid capacity—not a household-bill forecast.</h1>
       <p className="article-dek">The EIA’s latest generator inventory shows rapid growth in utility-scale battery storage. The figure helps explain a changing power grid, but it does not by itself show what any household will pay for electricity.</p>
-      <p className="article-date">Published {published} · Updated {published} · Educational analysis, not financial advice.</p>
+      <ArticleByline publishedAt="2026-08-12" updatedAt="2026-08-12" />
+      <p className="article-date">Educational analysis, not financial advice.</p>
 
       <section><h2>Confirmed facts</h2>
         <p>The U.S. power system had 43.6 gigawatts (GW) of operational battery storage capacity at the end of 2025, according to the U.S. Energy Information Administration. Operators added 8.3 GW in the first six months of 2026, bringing nameplate battery-storage capacity to nearly 52 GW in June.</p>

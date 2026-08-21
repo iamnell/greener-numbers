@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
 
 const source = "https://www.eia.gov/outlooks/steo/";
 const changes = "https://www.eia.gov/outlooks/steo/archives/aug26.pdf";
@@ -11,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default function EiaGasolineForecastNews() {
-  const published = "August 14, 2026";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -20,6 +20,7 @@ export default function EiaGasolineForecastNews() {
     datePublished: "2026-08-14",
     dateModified: "2026-08-14",
     mainEntityOfPage: "https://greenernumbers.com/news/eia-2026-gasoline-price-forecast",
+    author: articleAuthorJsonLd(),
     publisher: { "@type": "Organization", name: "Greener Numbers", url: "https://greenernumbers.com" },
   };
 
@@ -29,7 +30,8 @@ export default function EiaGasolineForecastNews() {
       <p className="eyebrow">News · Transportation costs · 4 min read</p>
       <h1>EIA forecasts a $3.78 average U.S. gasoline price for 2026. That is a national outlook—not a pump-price quote.</h1>
       <p className="article-dek">The federal energy agency’s August outlook raised the national annual average it expects drivers to pay this year. The projection is useful context for fuel budgets and EV comparisons, but it cannot tell a driver’s next fill-up price.</p>
-      <p className="article-date">Published {published} · Updated {published} · Educational analysis, not financial advice.</p>
+      <ArticleByline publishedAt="2026-08-14" updatedAt="2026-08-14" />
+      <p className="article-date">Educational analysis, not financial advice.</p>
 
       <section><h2>Confirmed facts</h2>
         <p>The U.S. Energy Information Administration’s August 2026 Short-Term Energy Outlook projects that the U.S. regular gasoline retail price will average $3.78 per gallon in 2026. EIA’s table shows an actual annual average of $3.10 per gallon for 2025 and projects $3.29 per gallon for 2027.</p>

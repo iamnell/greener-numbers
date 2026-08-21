@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
 
 const source = "https://www.eia.gov/todayinenergy/detail.php?id=67926";
 const data = "https://www.eia.gov/electricity/annual/";
@@ -11,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default function PuertoRicoOutageDurationNews() {
-  const published = "August 13, 2026";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -20,6 +20,7 @@ export default function PuertoRicoOutageDurationNews() {
     datePublished: "2026-08-13",
     dateModified: "2026-08-13",
     mainEntityOfPage: "https://greenernumbers.com/news/puerto-rico-outage-duration-2025",
+    author: articleAuthorJsonLd(),
     publisher: { "@type": "Organization", name: "Greener Numbers", url: "https://greenernumbers.com" },
   };
 
@@ -29,7 +30,8 @@ export default function PuertoRicoOutageDurationNews() {
       <p className="eyebrow">News · Grid reliability · 4 min read</p>
       <h1>Puerto Rico’s average non-major-event outage duration rose 19% in 2025.</h1>
       <p className="article-dek">EIA’s early 2025 reliability data show that outages outside major events remained far longer in Puerto Rico than the mainland-U.S. benchmark. The measure describes service interruptions, not a customer’s bill or the cause of every outage.</p>
-      <p className="article-date">Published {published} · Updated {published} · Educational analysis, not financial advice.</p>
+      <ArticleByline publishedAt="2026-08-13" updatedAt="2026-08-13" />
+      <p className="article-date">Educational analysis, not financial advice.</p>
 
       <section><h2>Confirmed facts</h2>
         <p>Puerto Rico electricity customers experienced an average of 36 hours of non-momentary power interruptions not caused by major events in 2025, according to the U.S. Energy Information Administration’s August 10 release. EIA says that was 19% more than in 2024.</p>

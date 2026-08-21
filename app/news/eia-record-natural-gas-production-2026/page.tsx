@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ArticleByline, articleAuthorJsonLd } from "../../../lib/editorial";
 
 const source = "https://www.eia.gov/todayinenergy/detail.php?id=67944";
 const steo = "https://www.eia.gov/outlooks/steo/";
@@ -11,7 +12,6 @@ export const metadata: Metadata = {
 };
 
 export default function EiaRecordNaturalGasProductionNews() {
-  const published = "August 18, 2026";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
@@ -20,6 +20,7 @@ export default function EiaRecordNaturalGasProductionNews() {
     datePublished: "2026-08-18",
     dateModified: "2026-08-18",
     mainEntityOfPage: "https://greenernumbers.com/news/eia-record-natural-gas-production-2026",
+    author: articleAuthorJsonLd(),
     publisher: { "@type": "Organization", name: "Greener Numbers", url: "https://greenernumbers.com" },
   };
 
@@ -29,7 +30,8 @@ export default function EiaRecordNaturalGasProductionNews() {
       <p className="eyebrow">News · Natural gas · 3 min read</p>
       <h1>EIA forecasts record U.S. natural-gas production in 2026. That alone does not set a household bill.</h1>
       <p className="article-dek">The federal energy agency projects marketed natural-gas production will average 122.5 billion cubic feet per day this year—above the prior record. The forecast is a supply measure, not a retail-price or utility-bill quote.</p>
-      <p className="article-date">Published {published} · Updated {published} · Educational analysis, not financial advice.</p>
+      <ArticleByline publishedAt="2026-08-18" updatedAt="2026-08-18" />
+      <p className="article-date">Educational analysis, not financial advice.</p>
 
       <section><h2>Confirmed facts</h2>
         <p>The U.S. Energy Information Administration said in its August 12, 2026 Today in Energy analysis that it forecasts U.S. marketed natural-gas production to average 122.5 billion cubic feet per day in 2026. EIA said that would exceed the previous record of 118.5 billion cubic feet per day set in 2025.</p>
