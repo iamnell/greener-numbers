@@ -1,5 +1,6 @@
 {
   "crons": [
-    { "path": "/api/cron/ev-rate-refresh", "schedule": "15 8 * * *" }
+    { "path": "/api/cron/ev-rate-refresh", "schedule": "15 8 * * *" },
+    { "path": "/api/cron/sync-youtube", "schedule": "0 */2 * * *" }
   ]
 }
