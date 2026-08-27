@@ -3,7 +3,7 @@
 - Production: `https://greenernumbers.com`
 - Repository: `https://github.com/iamnell/greener-numbers` (`main`)
 - Deployment: Vercel
-- Database environment names: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- Database environment names: `NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `EDITORIAL_SUPABASE_URL`, `EDITORIAL_SUPABASE_SERVICE_ROLE_KEY`
 
 ## Sources and publishing
 

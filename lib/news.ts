@@ -1,5 +1,3 @@
-import { createServerClient } from "./supabase/server";
-
 export type PublishedNewsStory = {
   slug: string;
   title: string;
@@ -15,7 +13,11 @@ export type PublishedNewsStory = {
  */
 export async function getPublishedNews(limit = 12): Promise<PublishedNewsStory[]> {
   try {
-    const { data, error } = await createServerClient()
+    const url = process.env.EDITORIAL_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.EDITORIAL_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !key) throw new Error("Editorial Supabase is not configured.");
+    const { createClient } = await import("@supabase/supabase-js");
+    const { data, error } = await createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } })
       .from("content_publications")
       .select("publication_url,published_at,content_items!inner(brand,title,summary,category,article_url)")
       .eq("platform", "website")
