@@ -5,7 +5,7 @@ export function Breadcrumbs({ items }: { items: Array<{ label: string; href?: st
 }
 
 export function DataMeta({ source, updated, children }: { source?: string; updated?: string; children?: React.ReactNode }) {
-  return <aside className="data-meta"><b>Data source</b><span>{source ?? "U.S. Energy Information Administration"}</span><b>Last updated</b><span>{updated ?? "Launch snapshot · August 11, 2026"}</span>{children}</aside>;
+  return <aside className="data-meta"><b>Data source</b><span>{source ?? "See page-specific source notes"}</span><b>Last updated</b><span>{updated ?? "Varies by dataset; see the reporting period beside each metric."}</span>{children}</aside>;
 }
 
 export function MethodologyBox({ title = "How we calculate this", children }: { title?: string; children: React.ReactNode }) {
