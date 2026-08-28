@@ -1,0 +1,2 @@
+import { ingestEia, requireCron, response, runEnd, runStart } from "../_shared/greener.ts";
+Deno.serve(async (req) => { const denied = requireCron(req); if (denied) return denied; const id = await runStart("greener-source-ingestion"); try { const r = await ingestEia(); await runEnd(id, "success", r, undefined, { sources: ["EIA Today in Energy RSS"] }); return response(r); } catch (e) { await runEnd(id, "failed", {}, e); return response({ error: "ingestion failed" }, 500); } });

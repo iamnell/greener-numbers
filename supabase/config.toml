@@ -1,0 +1,18 @@
+project_id = "fatcsshvtazwgpxhmjpe"
+
+[functions.greener-source-ingestion]
+verify_jwt = false
+[functions.greener-daily-story]
+verify_jwt = false
+[functions.greener-breaking-news]
+verify_jwt = false
+[functions.update-energy-data]
+verify_jwt = false
+[functions.update-ev-data]
+verify_jwt = false
+[functions.update-green-incentives]
+verify_jwt = false
+[functions.greener-daily-story-watchdog]
+verify_jwt = false
+[functions.greener-cron-health-check]
+verify_jwt = false

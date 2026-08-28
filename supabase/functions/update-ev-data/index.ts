@@ -1,0 +1,8 @@
+import { db, requireCron, response, runEnd, runStart, SITE } from "../_shared/greener.ts";
+Deno.serve(async (req) => { const denied = requireCron(req); if (denied) return denied; const id = await runStart("update-ev-data"); try {
+  const apiKey = Deno.env.get("NREL_API_KEY"); if (!apiKey) throw new Error("NREL_API_KEY_NOT_CONFIGURED");
+  const q = new URLSearchParams({ api_key: apiKey, fuel_type: "ELEC", access: "public", status: "E", limit: "1" }); const res = await fetch(`https://developer.nlr.gov/api/alt-fuel-stations/v1.json?${q}`, { signal: AbortSignal.timeout(12_000) }); if (!res.ok) throw new Error(`AFDC_${res.status}`);
+  const payload = await res.json() as { total_results?: number }; const count = Number(payload.total_results); if (!Number.isFinite(count)) throw new Error("AFDC_INVALID"); const period = new Date().toISOString().slice(0, 10);
+  const { error } = await db.from("ev_data").upsert({ site: SITE, dataset: "public-electric-stations", geography: "US", value: count, unit: "stations", period, source_name: "DOE Alternative Fuels Data Center", source_url: "https://afdc.energy.gov/stations#/find/nearest", source_record_id: period, metadata: { query: "fuel_type=ELEC;access=public;status=E" }, last_verified: new Date().toISOString(), last_updated: new Date().toISOString() }, { onConflict: "site,dataset,geography,period,source_record_id" }); if (error) throw error;
+  await runEnd(id, "success", { created: 1 }); return response({ updated: 1, stations: count });
+} catch (e) { await runEnd(id, "failed", {}, e); return response({ error: "EV update failed" }, 500); } });
