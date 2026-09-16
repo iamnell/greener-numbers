@@ -37,7 +37,7 @@ export function NewsletterForm() {
   return <form className="newsletter-form" onSubmit={submit} noValidate>
     <label className="sr-only" htmlFor="newsletter-email">Email address</label>
     <input id="newsletter-email" name="email" type="email" required autoComplete="email" placeholder="Your email address" />
-    <label className="newsletter-consent"><input type="checkbox" name="consent" checked={consent} onChange={(event) => setConsent(event.target.checked)} required /> I agree to receive the weekly brief from Greener Numbers.</label>
+    <label className="newsletter-consent"><input type="checkbox" name="consent" aria-label="I agree to receive the weekly brief from Greener Numbers" checked={consent} onChange={(event) => setConsent(event.target.checked)} required /> I agree to receive the weekly brief from Greener Numbers.</label>
     <button type="submit" disabled={sending}>{sending ? "Joining…" : "Subscribe ↗"}</button>
     <p className="form-message" role="status" aria-live="polite">{message}</p>
   </form>;
