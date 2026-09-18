@@ -90,7 +90,8 @@ begin
   select extensions.net.http_post(
     url := (select decrypted_secret from vault.decrypted_secrets where name = 'project_url') || '/functions/v1/' || function_name,
     headers := jsonb_build_object('Content-Type','application/json','apikey',(select decrypted_secret from vault.decrypted_secrets where name = 'publishable_key'),'x-greener-cron-secret',(select decrypted_secret from vault.decrypted_secrets where name = 'greener_cron_secret')),
-    body := jsonb_build_object('scheduled_at', now())
+    body := jsonb_build_object('scheduled_at', now()),
+    timeout_milliseconds := 120000
   ) into request_id;
   return request_id;
 end; $$;

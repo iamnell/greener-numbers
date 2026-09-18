@@ -16,3 +16,5 @@ verify_jwt = false
 verify_jwt = false
 [functions.greener-cron-health-check]
 verify_jwt = false
+[functions.publish-gemini-brief]
+verify_jwt = false

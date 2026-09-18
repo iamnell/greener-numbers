@@ -1,0 +1,23 @@
+{
+  "name": "greener-numbers-cron-jobs",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Railway-compatible cron jobs replacing Supabase Edge Functions for Greener Numbers",
+  "scripts": {
+    "update-energy-data": "node update-energy-data.js",
+    "fetch-ev-data": "node fetch-ev-data.js",
+    "ingest-youtube-feeds": "node ingest-youtube-feeds.js",
+    "fetch-ai-watchdog": "node fetch-ai-watchdog.js",
+    "scheduled-greener-brief": "node scheduled-greener-brief.js",
+    "publish-gemini-brief": "node publish-gemini-brief.js",
+    "greener-breaking-news": "node greener-breaking-news.js",
+    "update-green-incentives": "node update-green-incentives.js",
+    "greener-daily-story": "node greener-daily-story.js",
+    "greener-cron-health-check": "node greener-cron-health-check.js",
+    "greener-daily-story-watchdog": "node greener-daily-story-watchdog.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1"
+  }
+}
