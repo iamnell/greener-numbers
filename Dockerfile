@@ -5,7 +5,7 @@ ENV NODE_ENV=production
 
 # ---- deps ----
 COPY package.json package-lock.json* ./
-RUN npm ci --omit=dev
+RUN npm ci
 
 # ---- build ----
 FROM node:22-alpine AS builder
