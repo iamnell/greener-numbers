@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "node:crypto";
 import { createServerClient } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
@@ -39,6 +40,7 @@ export async function POST(request: NextRequest) {
     category: payload.category.trim(), story_type: "daily", status: "published", is_breaking: false,
     source_url: sources[0], source_urls: sources, source_name: "Gemini Daily Brief Bridge",
     source_release_id: syncKey, generated_by_job: "daily-brief-bridge",
+    content_hash: createHash("sha256").update(`${syncKey}|${content}`).digest("hex"),
     first_published_at: publishedAt.toISOString(), published_at: publishedAt.toISOString(), last_updated_at: new Date().toISOString(),
     qc_status: "passed", qc_score: 100, qc_notes: ["Validated bridge payload"], editorial_model: "gemini-google-doc",
     reviewed_at: new Date().toISOString(), original_title: payload.title.trim(), original_content: content,
