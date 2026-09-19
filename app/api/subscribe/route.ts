@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "../../../lib/supabase/server";
+import { database } from "../../../lib/db";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -14,16 +14,7 @@ export async function POST(request: Request) {
 
   const normalizedEmail = email.trim().toLowerCase();
   try {
-    const { error } = await createServerClient().from("newsletter_subscribers").upsert(
-      {
-        email: normalizedEmail,
-        consented_at: new Date().toISOString(),
-        source: "website",
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "email" },
-    );
-    if (error) throw error;
+    await database().query("insert into newsletter_subscribers (email,consented_at,source,updated_at) values ($1,$2,$3,$4) on conflict (email) do update set consented_at=excluded.consented_at,source=excluded.source,updated_at=excluded.updated_at", [normalizedEmail, new Date().toISOString(), "website", new Date().toISOString()]);
   } catch {
     return NextResponse.json({ message: "We could not save your subscription. Please try again." }, { status: 502 });
   }

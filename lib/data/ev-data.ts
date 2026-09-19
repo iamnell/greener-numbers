@@ -1,4 +1,4 @@
-import { createServerClient } from "../supabase/server";
+import { database } from "../db";
 import { isSupportedIncentiveJurisdiction } from "./incentive-jurisdictions";
 
 export type PublishedIncentive = {
@@ -29,19 +29,8 @@ export async function listVerifiedIncentives(state?: string) {
     throw new Error("INVALID_STATE");
   }
 
-  const client = createServerClient();
-  let query = client
-    .from("ev_incentives")
-    .select("id,program_name,geography_type,geography_code,incentive_type,value_text,amount,currency,percentage,maximum_amount,benefit_basis,eligibility,effective_at,expires_at,status,source_url,source_publisher,source_updated_at,last_checked_at")
-    .in("status", ["active", "unknown"])
-    .order("last_checked_at", { ascending: false })
-    .limit(100);
-
-  if (normalizedState) {
-    query = query.or(`geography_type.eq.federal,geography_code.eq.${normalizedState}`);
-  }
-
-  const { data, error } = await query;
-  if (error) throw new Error("INCENTIVES_READ_FAILED");
-  return data as PublishedIncentive[];
+  const { rows } = normalizedState
+    ? await database().query("select id,program_name,geography_type,geography_code,incentive_type,value_text,amount,currency,percentage,maximum_amount,benefit_basis,eligibility,effective_at,expires_at,status,source_url,source_publisher,source_updated_at,last_checked_at from ev_incentives where status in ('active','unknown') and (geography_type='federal' or geography_code=$1) order by last_checked_at desc limit 100", [normalizedState])
+    : await database().query("select id,program_name,geography_type,geography_code,incentive_type,value_text,amount,currency,percentage,maximum_amount,benefit_basis,eligibility,effective_at,expires_at,status,source_url,source_publisher,source_updated_at,last_checked_at from ev_incentives where status in ('active','unknown') order by last_checked_at desc limit 100");
+  return rows as PublishedIncentive[];
 }

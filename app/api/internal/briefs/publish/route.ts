@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
-import { createServerClient } from "@/lib/supabase/server";
+import { database } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
   const publishedAt = new Date(isText(payload.published_at) ? payload.published_at : Date.now());
   if (Number.isNaN(publishedAt.valueOf())) return NextResponse.json({ error: "invalid published_at" }, { status: 400 });
   const syncKey = `drive:${documentId}`;
-  const db = createServerClient();
+  const db = database();
   const record = {
     site: "greenernumbers", sync_key: syncKey, title: payload.title.trim(),
     slug: slug(String(payload.slug || `${BRAND}-${documentId}`)), summary: payload.summary.trim(), content,
@@ -45,7 +45,11 @@ export async function POST(request: NextRequest) {
     qc_status: "passed", qc_score: 100, qc_notes: ["Validated bridge payload"], editorial_model: "gemini-google-doc",
     reviewed_at: new Date().toISOString(), original_title: payload.title.trim(), original_content: content,
   };
-  const { data, error } = await db.from("site_news").upsert(record, { onConflict: "sync_key" }).select("id,slug").single();
-  if (error || !data) return NextResponse.json({ error: "brief could not be saved" }, { status: 500 });
-  return NextResponse.json({ ok: true, ...data }, { status: 201 });
+  try {
+    const { rows } = await db.query(`insert into site_news (site,sync_key,title,slug,summary,content,category,story_type,status,is_breaking,source_url,source_urls,source_name,source_release_id,generated_by_job,content_hash,first_published_at,published_at,last_updated_at,qc_status,qc_score,qc_notes,editorial_model,reviewed_at,original_title,original_content)
+      values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12::jsonb,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22::jsonb,$23,$24,$25,$26)
+      on conflict (sync_key) do update set title=excluded.title,slug=excluded.slug,summary=excluded.summary,content=excluded.content,category=excluded.category,source_url=excluded.source_url,source_urls=excluded.source_urls,content_hash=excluded.content_hash,last_updated_at=excluded.last_updated_at,qc_status=excluded.qc_status,qc_score=excluded.qc_score,qc_notes=excluded.qc_notes,reviewed_at=excluded.reviewed_at,original_title=excluded.original_title,original_content=excluded.original_content
+      returning id,slug`, [record.site,record.sync_key,record.title,record.slug,record.summary,record.content,record.category,record.story_type,record.status,record.is_breaking,record.source_url,JSON.stringify(record.source_urls),record.source_name,record.source_release_id,record.generated_by_job,record.content_hash,record.first_published_at,record.published_at,record.last_updated_at,record.qc_status,record.qc_score,JSON.stringify(record.qc_notes),record.editorial_model,record.reviewed_at,record.original_title,record.original_content]);
+    return NextResponse.json({ ok: true, ...rows[0] }, { status: 201 });
+  } catch { return NextResponse.json({ error: "brief could not be saved" }, { status: 500 }); }
 }
