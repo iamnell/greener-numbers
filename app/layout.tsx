@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Greener Numbers | The Economics of Going Green",
   description: "Data, tools, and analysis for understanding what energy, transportation, and clean technology actually cost.",
   alternates: { canonical: "/" },
-  icons: { icon: [{ rel: "icon", url: "/favicon.ico", type: "image/x-icon" }, { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" }] },
+  icons: { icon: [{ rel: "icon", url: "/favicon.ico", type: "image/x-icon" }] },
   openGraph: { title: "Greener Numbers | The Economics of Going Green", description: "Clear analysis, useful tools, and honest answers about what going green actually costs.", type: "website", url: "/", ...defaultOpenGraph },
   twitter: { card: "summary_large_image", title: "Greener Numbers", description: "The economics of going green.", images: "/opengraph-image" },
 };
