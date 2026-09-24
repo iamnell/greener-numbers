@@ -126,7 +126,9 @@ export function matchShortToStory(shorts: YouTubeShort[], story: { title: string
   const storyTime = story.publishedAt ? new Date(story.publishedAt).getTime() : Number.NaN;
   let best: { short: YouTubeShort; score: number } | null = null;
   for (const short of shorts) {
-    const shortTime = new Date(short.publishedAt).getTime();
+    // The Shorts-tab fallback has no dates and only lists recent Shorts, so treat an
+    // undated Short as published now: it can only match a story from the last 4 days.
+    const shortTime = short.publishedAt ? new Date(short.publishedAt).getTime() : Date.now();
     if (!Number.isNaN(storyTime) && !Number.isNaN(shortTime) && Math.abs(shortTime - storyTime) > 4 * 86400000) continue;
     let score = 0;
     for (const word of keywords(short.title)) if (storyWords.has(word)) score += /\d/.test(word) ? 2 : 1;
