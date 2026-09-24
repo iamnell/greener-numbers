@@ -17,7 +17,7 @@ function processSite_(site) {
   const files = DriveApp.getFolderById(site.folderId).getFilesByType(MimeType.GOOGLE_DOCS);
   while (files.hasNext()) {
     const file = files.next();
-    const parsed = parseBrief_(DocumentApp.openById(file.getId()).getBody().getText());
+    let parsed; try { parsed = parseBrief_(readDocText_(file.getId())); } catch (e) { writeAudit_(file, site, 'unreadable', 'error', { message: String(e) }); continue; }
     const fingerprint = sha256_([file.getId(), file.getLastUpdated().toISOString(), parsed.raw].join('|'));
     const prior = readAudit_(file.getId());
     if (prior && prior.fingerprint === fingerprint && prior.state !== 'error') continue;
@@ -64,3 +64,10 @@ function auditKey_(fileId) { return 'brief-audit:' + fileId; }
 function readAudit_(fileId) { const value = PropertiesService.getScriptProperties().getProperty(auditKey_(fileId)); return value ? JSON.parse(value) : null; }
 function writeAudit_(file, site, fingerprint, state, detail) { PropertiesService.getScriptProperties().setProperty(auditKey_(file.getId()), JSON.stringify({ fileId: file.getId(), fileName: file.getName(), brand: site.brand, folderId: site.folderId, fingerprint: fingerprint, state: state, detail: detail, at: new Date().toISOString() })); }
 function sha256_(value) { return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, value, Utilities.Charset.UTF_8).map(function(b) { return ('0' + ((b + 256) % 256).toString(16)).slice(-2); }).join(''); }
+
+/** Reads a Google Doc as plain text through the Drive export API (fits the drive.readonly scope; DocumentApp.openById needs full Docs write access). */
+function readDocText_(fileId) { let r; for (let attempt = 0; attempt < 2; attempt++) { r = UrlFetchApp.fetch('https://www.googleapis.com/drive/v3/files/' + encodeURIComponent(fileId) + '/export?mimeType=text/plain', { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() }, muteHttpExceptions: true }); if (r.getResponseCode() === 200) break; Utilities.sleep(1500); } if (r.getResponseCode() !== 200) throw new Error('Drive export HTTP ' + r.getResponseCode() + ' for ' + fileId); return r.getContentText().replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n'); }
+/** Read-only: logs a compact summary of every audit record written by the last run. */
+function showAudit() { const props = PropertiesService.getScriptProperties().getProperties(); const rows = Object.keys(props).filter(function(k) { return k.indexOf('brief-audit:') === 0; }).map(function(k) { return JSON.parse(props[k]); }); rows.sort(function(a, b) { return (a.brand + a.fileName).localeCompare(b.brand + b.fileName); }); Logger.log('TOTAL ' + rows.length); rows.forEach(function(r) { Logger.log([r.brand, r.state, r.fileName, r.fileId, r.detail && r.detail.errors ? r.detail.errors.join('; ') : ''].join(' || ')); }); return rows.length; }
+/** Clears the dry-run audit records so the next run re-checks every doc. Touches only brief-audit:* keys. */
+function clearAudit() { const p = PropertiesService.getScriptProperties(); const keys = Object.keys(p.getProperties()).filter(function(k) { return k.indexOf('brief-audit:') === 0; }); keys.forEach(function(k) { p.deleteProperty(k); }); Logger.log('CLEARED ' + keys.length); return keys.length; }
