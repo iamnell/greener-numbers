@@ -28,33 +28,79 @@ function parseFeed(xml: string): YouTubeShort[] {
   return shorts;
 }
 
-async function fetchFeed(channelId: string): Promise<YouTubeShort[]> {
-  // The public channel feed is keyless but occasionally returns 404/500, so retry
-  // and throw on failure: unstable_cache keeps serving the last good list instead
-  // of caching an empty one.
-  let lastError: unknown;
-  for (let attempt = 0; attempt < 3; attempt++) {
-    try {
-      const response = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, {
-        cache: "no-store",
-        signal: AbortSignal.timeout(4000),
-      });
-      if (response.ok) {
-        const shorts = parseFeed(await response.text());
-        if (shorts.length) return shorts;
-      }
-      lastError = new Error(`YouTube feed returned ${response.status}`);
-    } catch (error) {
-      lastError = error;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 400 * (attempt + 1)));
-  }
-  throw lastError;
+const BROWSER_HEADERS = {
+  "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36",
+  "accept-language": "en-US,en;q=0.9",
+};
+
+async function fetchText(url: string) {
+  const response = await fetch(url, { cache: "no-store", headers: BROWSER_HEADERS, signal: AbortSignal.timeout(5000) });
+  if (!response.ok) throw new Error(`${url} returned ${response.status}`);
+  return response.text();
 }
 
-export async function getChannelShorts(channelId: string, limit = 6): Promise<YouTubeShort[]> {
+async function fetchFeed(channelId: string): Promise<YouTubeShort[]> {
+  const shorts = parseFeed(await fetchText(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`));
+  if (!shorts.length) throw new Error("YouTube feed had no Shorts");
+  return shorts;
+}
+
+function collectShortLockups(node: unknown, out: Record<string, unknown>[]) {
+  if (Array.isArray(node)) {
+    for (const item of node) collectShortLockups(item, out);
+  } else if (node && typeof node === "object") {
+    const record = node as Record<string, unknown>;
+    if (record.shortsLockupViewModel) out.push(record.shortsLockupViewModel as Record<string, unknown>);
+    else for (const value of Object.values(record)) collectShortLockups(value, out);
+  }
+}
+
+/** Fallback: the channel's public Shorts tab (newest first, no publish dates). */
+async function fetchShortsTab(channelUrl: string): Promise<YouTubeShort[]> {
+  const html = await fetchText(`${channelUrl.replace(/\/$/, "")}/shorts`);
+  const marker = "var ytInitialData = ";
+  const begin = html.indexOf(marker);
+  const finish = begin < 0 ? -1 : html.indexOf(";</script>", begin);
+  if (begin < 0 || finish < 0) throw new Error("Shorts tab had no initial data");
+  const lockups: Record<string, unknown>[] = [];
+  collectShortLockups(JSON.parse(html.slice(begin + marker.length, finish)), lockups);
+  const shorts: YouTubeShort[] = [];
+  for (const lockup of lockups) {
+    const text = JSON.stringify(lockup);
+    const id = text.match(/"videoId":"([\w-]{11})"/)?.[1];
+    const overlay = lockup.overlayMetadata as { primaryText?: { content?: string } } | undefined;
+    const title = overlay?.primaryText?.content ?? String(lockup.accessibilityText ?? "").replace(/, [\d,.]+[KMB]? views? - play Short$/i, "");
+    if (id && title && !shorts.some((short) => short.id === id)) shorts.push({ id, title, publishedAt: "", url: `https://www.youtube.com/shorts/${id}` });
+  }
+  if (!shorts.length) throw new Error("Shorts tab had no Shorts");
+  return shorts;
+}
+
+async function loadShorts(channelId: string, channelUrl?: string): Promise<YouTubeShort[]> {
+  // The RSS feed carries publish dates but YouTube returns 404 to some hosting IPs,
+  // so fall back to the public Shorts tab. Throwing keeps the last good cached list.
+  const errors: string[] = [];
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      return await fetchFeed(channelId);
+    } catch (error) {
+      errors.push(String(error));
+    }
+    if (channelUrl) {
+      try {
+        return await fetchShortsTab(channelUrl);
+      } catch (error) {
+        errors.push(String(error));
+      }
+    }
+  }
+  console.warn(`[youtube-shorts] ${channelId}: ${errors.join(" | ")}`);
+  throw new Error("No YouTube Shorts source available");
+}
+
+export async function getChannelShorts(channelId: string, limit = 6, channelUrl?: string): Promise<YouTubeShort[]> {
   try {
-    const cached = unstable_cache(() => fetchFeed(channelId), ["youtube-shorts", channelId], { revalidate: 1800 });
+    const cached = unstable_cache(() => loadShorts(channelId, channelUrl), ["youtube-shorts-v2", channelId], { revalidate: 1800 });
     return (await cached()).slice(0, limit);
   } catch {
     return [];
