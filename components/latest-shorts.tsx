@@ -3,7 +3,7 @@ import { getChannelShorts, type YouTubeShort } from "../lib/youtube-shorts";
 import { LiteShort } from "./lite-short";
 
 export function getGreenerNumbersShorts(limit = 6) {
-  return getChannelShorts(greenerNumbersYouTube.channelId, limit);
+  return getChannelShorts(greenerNumbersYouTube.channelId, limit, greenerNumbersYouTube.channelUrl);
 }
 
 export function ShortsGrid({ shorts }: { shorts: YouTubeShort[] }) {
