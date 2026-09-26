@@ -7,7 +7,8 @@ import { eiaSources, getEnergyNowData } from "../lib/data/eia";
 import { formatPublishedDate, getPublishedNews } from "../lib/news";
 import { getPublishedVideos } from "../lib/videos";
 
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export default async function Home() {
   const [energyNow, videos, news] = await Promise.all([getEnergyNowData(), getPublishedVideos(3), getPublishedNews(4)]);
