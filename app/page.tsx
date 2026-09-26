@@ -4,14 +4,15 @@ import { SiteFooter, SiteHeader } from "../components/site-header";
 import { NewsletterForm } from "../components/newsletter-form";
 import { LatestVideos } from "../components/video-cards";
 import { eiaSources, getEnergyNowData } from "../lib/data/eia";
-import { formatPublishedDate, getPublishedNews } from "../lib/news";
+import { formatPublishedDate } from "../lib/news";
+import { listAutomatedStories } from "../lib/data/news";
 import { getPublishedVideos } from "../lib/videos";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function Home() {
-  const [energyNow, videos, news] = await Promise.all([getEnergyNowData(), getPublishedVideos(3), getPublishedNews(4)]);
+  const [energyNow, videos, news] = await Promise.all([getEnergyNowData(), getPublishedVideos(3), listAutomatedStories(4)]);
   const [lead, ...more] = news;
   return <><SiteHeader/><main id="main-content">
     <section className="platform-main platform-section" aria-labelledby="home-heading" style={{paddingTop: 68, paddingBottom: 42}}>
@@ -22,7 +23,7 @@ export default async function Home() {
     </section>
     <section className="platform-main platform-section" aria-labelledby="news-heading" style={{paddingTop: 24}}>
       <div className="section-intro"><div><p className="eyebrow">News</p><h2 id="news-heading">Latest verified stories.</h2></div><Link href="/news">All news →</Link></div>
-      {lead ? <div className="article-cards"><Link href={`/news/${lead.slug}`}><span>{lead.label}</span><h3>{lead.title}</h3><p>{lead.description}</p><small>Published {formatPublishedDate(lead.published_at)}</small></Link>{more.slice(0,2).map(story=><Link href={`/news/${story.slug}`} key={story.slug}><span>{story.label}</span><h3>{story.title}</h3><p>{story.description}</p><small>Published {formatPublishedDate(story.published_at)}</small></Link>)}</div> : <p className="numbers-note">Published news is temporarily unavailable. We do not substitute a stale list.</p>}
+      {lead ? <div className="article-cards"><Link href={`/news/${lead.slug}`}><span>{lead.category}</span><h3>{lead.title}</h3><p>{lead.summary}</p><small>Published {formatPublishedDate(lead.published_at)}</small></Link>{more.slice(0,2).map(story=><Link href={`/news/${story.slug}`} key={story.slug}><span>{story.category}</span><h3>{story.title}</h3><p>{story.summary}</p><small>Published {formatPublishedDate(story.published_at)}</small></Link>)}</div> : <p className="numbers-note">Published news is temporarily unavailable. We do not substitute a stale list.</p>}
     </section>
     <section className="platform-main platform-section" aria-labelledby="data-heading">
       <div className="section-intro"><div><p className="eyebrow">Charts &amp; data</p><h2 id="data-heading">Energy signals, with sources.</h2></div><Link href="/energy-data">All energy data →</Link></div>
