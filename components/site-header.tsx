@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const mainLinks = [["Calculators", "/calculators"], ["Electricity", "/electricity"], ["Solar", "/solar"], ["EV & Transportation", "/ev"], ["Home Efficiency", "/home-efficiency"], ["Energy Data", "/energy-data"], ["Guides", "/guides"], ["News", "/news"], ["Videos", "/videos"]] as const;
+const mainLinks = [["News", "/news"], ["Charts & data", "/energy-data"], ["Videos", "/videos"], ["Explore", "/calculators"]] as const;
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
