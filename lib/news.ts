@@ -24,5 +24,5 @@ export async function getPublishedNews(limit = 12): Promise<PublishedNewsStory[]
 }
 
 export function formatPublishedDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(value));
+  return new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "America/Chicago" }).format(new Date(value));
 }
