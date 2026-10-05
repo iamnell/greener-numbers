@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "node:crypto";
 import { database } from "@/lib/db";
+import { sourceLabel } from "@/lib/data/news";
 import { validateBriefPayload, type BriefPayload } from "@/lib/briefs/validation";
 
 export const runtime = "nodejs";
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     site: "greenernumbers", sync_key: syncKey, title: brief.title,
     slug: slug(brief.slug || `Greener Numbers-${brief.documentId}`), summary: brief.summary, content: brief.content,
     category: brief.category, story_type: "daily", status: brief.publish ? "published" : "draft", is_breaking: false,
-    source_url: brief.sources[0], source_urls: brief.sources, source_name: "Gemini Daily Brief Bridge",
+    source_url: brief.sources[0], source_urls: brief.sources, source_name: sourceLabel(null, brief.sources[0]),
     source_release_id: syncKey, generated_by_job: "daily-brief-bridge",
     content_hash: createHash("sha256").update(`${syncKey}|${brief.content}`).digest("hex"),
     first_published_at: brief.publish ? brief.publishedAt.toISOString() : null,
