@@ -1,5 +1,5 @@
 import { greenerNumbersYouTube } from "./video";
-import { createServerClient } from "./supabase/server";
+import { database } from "./db";
 
 export type VideoRecord = {
   id?: string;
@@ -25,15 +25,8 @@ export type SyncSummary = {
 
 export async function getPublishedVideos(limit = 12): Promise<VideoRecord[]> {
   try {
-    const client = createServerClient();
-    const { data, error } = await client
-      .from("videos")
-      .select("id,youtube_video_id,title,description,thumbnail_url,published_at,duration,youtube_url,channel_id,category,status")
-      .eq("status", "published")
-      .order("published_at", { ascending: false })
-      .limit(limit);
-    if (error) throw error;
-    return (data ?? []) as VideoRecord[];
+    const { rows } = await database().query("select id,youtube_video_id,title,description,thumbnail_url,published_at,duration,youtube_url,channel_id,category,status from videos where status='published' order by published_at desc limit $1", [limit]);
+    return rows as VideoRecord[];
   } catch {
     // The public site should keep rendering when Supabase is unavailable or the
     // migration has not been applied yet.
@@ -87,10 +80,9 @@ export async function syncYouTubeVideos(): Promise<SyncSummary> {
   const publicVideos = (details.items ?? []).filter((item) => item.status?.privacyStatus === "public" && item.snippet?.title && item.snippet.channelId === channelId);
   const skipped = ids.length - publicVideos.length;
   if (!publicVideos.length) return { success: true, found: ids.length, inserted: 0, updated: 0, skipped };
-  const client = createServerClient();
-  const { data: existing, error: existingError } = await client.from("videos").select("youtube_video_id").in("youtube_video_id", publicVideos.map((item) => item.id));
-  if (existingError) throw existingError;
-  const existingIds = new Set((existing ?? []).map((row: { youtube_video_id: string }) => row.youtube_video_id));
+  const client = database();
+  const { rows: existing } = await client.query("select youtube_video_id from videos where youtube_video_id = any($1)", [publicVideos.map((item) => item.id)]);
+  const existingIds = new Set(existing.map((row: { youtube_video_id: string }) => row.youtube_video_id));
   const rows = publicVideos.map((item) => {
     const snippet = item.snippet!;
     const text = `${snippet.title} ${snippet.description ?? ""} ${(snippet.tags ?? []).join(" ")}`.toLowerCase();
@@ -109,7 +101,6 @@ export async function syncYouTubeVideos(): Promise<SyncSummary> {
       updated_at: new Date().toISOString(),
     };
   });
-  const { error: upsertError } = await client.from("videos").upsert(rows, { onConflict: "youtube_video_id" });
-  if (upsertError) throw upsertError;
+  for (const row of rows) await client.query("insert into videos (youtube_video_id,title,description,thumbnail_url,published_at,duration,youtube_url,channel_id,category,status,updated_at) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) on conflict (youtube_video_id) do update set title=excluded.title,description=excluded.description,thumbnail_url=excluded.thumbnail_url,published_at=excluded.published_at,duration=excluded.duration,youtube_url=excluded.youtube_url,channel_id=excluded.channel_id,category=excluded.category,status=excluded.status,updated_at=excluded.updated_at", [row.youtube_video_id,row.title,row.description,row.thumbnail_url,row.published_at,row.duration,row.youtube_url,row.channel_id,row.category,row.status,row.updated_at]);
   return { success: true, found: ids.length, inserted: rows.filter((row) => !existingIds.has(row.youtube_video_id)).length, updated: rows.filter((row) => existingIds.has(row.youtube_video_id)).length, skipped };
 }

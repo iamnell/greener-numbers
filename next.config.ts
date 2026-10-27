@@ -29,6 +29,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      { source: "/:path*", has: [{ type: "host", value: "www.greenernumbers.com" }], destination: "https://greenernumbers.com/:path*", permanent: true },
       { source: "/tools", destination: "/calculators", permanent: true },
       { source: "/ev/charging-cost-calculator", destination: "/calculators/ev-charging-cost", permanent: true },
       { source: "/ev/ev-vs-gas-calculator", destination: "/calculators/ev-vs-gas", permanent: true },
