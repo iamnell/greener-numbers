@@ -30,6 +30,9 @@ export type ValidatedBrief = {
 
 const EXPECTED_BRAND = "Greener Numbers";
 export const EXPECTED_FOLDER_ID = "168w7pIZjNZyTOArAKNXbfcNJ4DBjrgsN";
+// Explicit cross-brand allowance, not live Drive-origin authentication.
+// The publisher must independently check the actual document and parent before submission.
+export const EV_INCOMING_FOLDER_ID = "1xc442GDY2h3fhgXfWw3BWfCdctPF5E45";
 const text = (value: unknown) => typeof value === "string" ? value.trim() : "";
 
 export function validateBriefPayload(payload: BriefPayload | null):
@@ -45,6 +48,10 @@ export function validateBriefPayload(payload: BriefPayload | null):
   const metadata = payload.metadata && typeof payload.metadata === "object" ? payload.metadata as Record<string, unknown> : {};
   const documentId = text(metadata.drive_file_id);
   const folderId = text(metadata.source_folder_id);
+  const originBrand = text(metadata.origin_brand);
+  const parentVerifiedAt = text(metadata.source_parent_verified_at);
+  const parentEvidence = text(metadata.source_parent_verification);
+  const isEVOrigin = folderId === EV_INCOMING_FOLDER_ID;
   const rawSources = Array.isArray(payload.source_urls) ? payload.source_urls : [];
   const sources = [...new Set(rawSources.map(text).filter(Boolean))];
 
@@ -54,7 +61,12 @@ export function validateBriefPayload(payload: BriefPayload | null):
   if (category.length < 2 || category.length > 80) errors.push("category must be 2-80 characters");
   if (content.length < 120) errors.push("content must be at least 120 characters");
   if (!/^[A-Za-z0-9_-]{10,}$/.test(documentId)) errors.push("metadata.drive_file_id is invalid");
-  if (folderId !== EXPECTED_FOLDER_ID) errors.push("metadata.source_folder_id is not the Greener Numbers incoming folder");
+  if (folderId !== EXPECTED_FOLDER_ID && !isEVOrigin) errors.push("metadata.source_folder_id is not an allowed incoming folder");
+  if (isEVOrigin) {
+    if (originBrand !== "EVInfoGuide") errors.push("EV incoming source requires metadata.origin_brand=EVInfoGuide");
+    if (!parentVerifiedAt || Number.isNaN(Date.parse(parentVerifiedAt))) errors.push("EV incoming source requires a valid source_parent_verified_at");
+    if (parentEvidence.length < 20) errors.push("EV incoming source requires source_parent_verification evidence");
+  }
   if (!sources.length) errors.push("at least one source URL is required");
   if (sources.some((url) => { try { return new URL(url).protocol !== "https:"; } catch { return true; } })) errors.push("all source URLs must be valid HTTPS URLs");
 
@@ -70,6 +82,10 @@ export function validateBriefPayload(payload: BriefPayload | null):
   if (requestedState === "published" && (qcStatus !== "passed" || reviewedBy.length < 3 || qcNotes.length === 0)) {
     errors.push("published briefs require qc.status=passed, qc.reviewed_by, and qc.notes");
   }
+
+  // Preserve submitted origin and the separately obtained verification evidence in existing storage.
+  // These are an audit record of publisher assertions, not server-side Drive verification.
+  if (isEVOrigin) qcNotes.push(`Source provenance (publisher-verified): document=${documentId}; source_folder=${folderId}; origin_brand=${originBrand}; source_parent_verified_at=${parentVerifiedAt}; evidence=${parentEvidence}`);
 
   if (errors.length) return { ok: false, errors };
   return { ok: true, value: {
