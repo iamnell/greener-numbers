@@ -55,6 +55,5 @@ export function ArticleByline({ publishedAt, updatedAt, reviewedBy }: { publishe
   return <div className="article-byline" aria-label="Article authorship and dates">
     <div>By <a href={editorialAuthor.profileUrl}>{editorialAuthor.name}</a></div>
     <div>Published {formatPublishedDate(publishedAt)}{updatedAt ? ` · Updated ${formatPublishedDate(updatedAt)}` : ""}</div>
-    {reviewedBy ? <div>Reviewed by {reviewedBy}</div> : null}
   </div>;
 }
